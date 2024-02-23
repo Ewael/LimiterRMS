@@ -31,8 +31,31 @@ def getSpecs(path: str) -> tuple[list[Speaker], list[Amplifier]]:
     """Return list of speakers & amplifiers specs from inventory
     """
 
-    data_amp = read_excel(path, sheet_name="amplifiers").to_dict(orient="records")
-    data_spk = read_excel(path, sheet_name="speakers").to_dict(orient="records")
+    data_amp = read_excel(
+        path,
+        sheet_name="amplifiers",
+        dtype={
+            "name": str,
+            "reference": str,
+            "gain": float,
+            #"power_8ohm": int,
+            #"power_4ohm": int,
+            #"power_2ohm": int,
+            #"outputs": int
+            }
+        ).to_dict(orient="records")
+    data_spk = read_excel(
+        path,
+        sheet_name="speakers",
+        dtype={
+            "name": str,
+            "reference": str,
+            "impedance": int,
+            "power": int,
+            "response": str,
+            "baffle": str
+            }
+        ).to_dict(orient="records")
 
     amplis, speakers = {}, {}
     for amp in data_amp:
@@ -40,7 +63,7 @@ def getSpecs(path: str) -> tuple[list[Speaker], list[Amplifier]]:
             _name=amp["name"],
             _reference=amp["reference"],
             _gain=amp["gain"],
-            _power={"8": amp["power_8ohm"], "4": amp["power_4ohm"], "2": amp["power_2ohm"]},
+            _power={8: amp["power_8ohm"], 4: amp["power_4ohm"], 2: amp["power_2ohm"]},
             _outputs=amp["outputs"],
         )
     for spk in data_spk:
@@ -60,14 +83,14 @@ def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float=0.775
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity
     """
 
-    if not amp.power.get(str(impedance)):
+    if not amp.power.get(impedance):
         raise ValueError("f{amp.name} does not support {spk.impedance} Ohm")
     if impedance > spk.impedance: # example: F221 cannot be 8 Ohm
         raise ValueError("f{spk.name} impedance cannot be higher than {spk.impedance} Ohm")
 
     # update power values that we will use depending on current impedance
     spk_power = spk.power * (spk.impedance / impedance)
-    amp_power = amp.power[str(impedance)]
+    amp_power = amp.power[impedance]
 
     lim_spk = 20 * log10(sqrt((spk_power / (1.5625 if spk.baffle == "OPEN" else 2.34375)) * impedance) / sensitivity) - amp.gain
     lim_amp = 20 * log10(sqrt((amp_power / 2) * impedance) / sensitivity) - amp.gain
@@ -85,7 +108,7 @@ def main():
     # on initialise spk et amp en leur donnant ref + impédance
     # on envoie les deux objets à calc
     for spk in speakers:
-        print(limit(speakers[spk], amplis["TSA"], 4))
+        print(limit(speakers[spk], amplis["TPA"], 4))
 
 
 if __name__ == '__main__':
