@@ -1,5 +1,4 @@
 from pathlib import Path
-from pprint import pprint
 from pandas import read_excel
 from math import log10, sqrt
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
@@ -10,21 +9,21 @@ INVENTORY_PATH = str(Path(__file__).parent.resolve()) + "\\" + INVENTORY_NAME
 
 
 class Speaker:
-    def __init__(self, _name: str, _reference: str, _impedance: int, _power: int, _response: str, _baffle: str) -> None:
-        self.name = _name
-        self.reference = _reference
-        self.impedance = _impedance
-        self.power = _power
-        self.response = _response
-        self.baffle = _baffle
+    def __init__(self, name: str, reference: str, impedance: int, power: int, response: str, baffle: str) -> None:
+        self.name = name
+        self.reference = reference
+        self.impedance = impedance
+        self.power = power
+        self.response = response
+        self.baffle = baffle
 
 class Amplifier:
-    def __init__(self, _name: str, _reference: str, _gain: int, _power: dict, _outputs: int) -> None:
-        self.name = _name
-        self.reference = _reference
-        self.gain = _gain
-        self.power = _power
-        self.outputs = _outputs
+    def __init__(self, name: str, reference: str, gain: int, power: dict, outputs: int) -> None:
+        self.name = name
+        self.reference = reference
+        self.gain = gain
+        self.power = power
+        self.outputs = outputs
 
 
 def getSpecs(path: str) -> tuple[list[Speaker], list[Amplifier]]:
@@ -60,20 +59,20 @@ def getSpecs(path: str) -> tuple[list[Speaker], list[Amplifier]]:
     amplis, speakers = {}, {}
     for amp in data_amp:
         amplis[amp["name"]] = Amplifier(
-            _name=amp["name"],
-            _reference=amp["reference"],
-            _gain=amp["gain"],
-            _power={8: amp["power_8ohm"], 4: amp["power_4ohm"], 2: amp["power_2ohm"]},
-            _outputs=amp["outputs"],
+            name=amp["name"],
+            reference=amp["reference"],
+            gain=amp["gain"],
+            power={8: amp["power_8ohm"], 4: amp["power_4ohm"], 2: amp["power_2ohm"]},
+            outputs=amp["outputs"],
         )
     for spk in data_spk:
         speakers[spk["name"]] = Speaker(
-            _name=spk["name"],
-            _reference=spk["reference"],
-            _impedance=spk["impedance"],
-            _power=spk["power"],
-            _response=spk["response"],
-            _baffle=spk["baffle"],
+            name=spk["name"],
+            reference=spk["reference"],
+            impedance=spk["impedance"],
+            power=spk["power"],
+            response=spk["response"],
+            baffle=spk["baffle"],
         )
 
     return amplis, speakers
