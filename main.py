@@ -5,32 +5,25 @@ from pandas import read_excel
 from math import log10, sqrt
 from pathlib import Path
 
-from PySide6.QtWidgets import QListWidget, QListWidgetItem, QApplication, QHBoxLayout, QVBoxLayout, QWidget, QPushButton, QLabel
+from PySide6.QtWidgets import (
+    QListWidget,
+    QListWidgetItem,
+    QApplication,
+    QHBoxLayout,
+    QVBoxLayout,
+    QWidget,
+    QPushButton,
+    QLabel,
+)
 from PySide6.QtCore import Qt
+
+from amplifier import Amplifier
+from speaker import Speaker
 
 
 APP_NAME = "LimiterRMS"
 INVENTORY_NAME = r"inventory.xlsx"
 INVENTORY_PATH = str(Path(__file__).parent.resolve()) + "\\" + INVENTORY_NAME
-
-
-class Speaker:
-    def __init__(self, name: str, reference: str, impedance: int, power: int, response: str, baffle: str) -> None:
-        self.name = name
-        self.reference = reference
-        self.impedance = impedance
-        self.power = power
-        self.response = response
-        self.baffle = baffle
-
-
-class Amplifier:
-    def __init__(self, name: str, reference: str, gain: int, power: dict, outputs: int) -> None:
-        self.name = name
-        self.reference = reference
-        self.gain = gain
-        self.power = power
-        self.outputs = outputs
 
 
 def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
@@ -39,8 +32,8 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
     data_amp = read_excel(
         path,
         sheet_name="amplifiers",
+        # We can not precise type for optionnal columns
         dtype={
-            "name": str,
             "reference": str,
             "gain": float,
             # "power_8ohm": int,
@@ -52,21 +45,19 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
     data_spk = read_excel(
         path,
         sheet_name="speakers",
-        dtype={"name": str, "reference": str, "impedance": int, "power": int, "response": str, "baffle": str},
+        dtype={"reference": str, "impedance": int, "power": int, "response": str, "baffle": str},
     ).to_dict(orient="records")
 
     amplis, speakers = {}, {}
     for amp in data_amp:
-        amplis[amp["name"]] = Amplifier(
-            name=amp["name"],
+        amplis[amp["reference"]] = Amplifier(
             reference=amp["reference"],
             gain=amp["gain"],
             power={8: amp["power_8ohm"], 4: amp["power_4ohm"], 2: amp["power_2ohm"]},
             outputs=amp["outputs"],
         )
     for spk in data_spk:
-        speakers[spk["name"]] = Speaker(
-            name=spk["name"],
+        speakers[spk["reference"]] = Speaker(
             reference=spk["reference"],
             impedance=spk["impedance"],
             power=spk["power"],
@@ -81,9 +72,9 @@ def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.7
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
 
     if not amp.power.get(impedance):
-        raise ValueError("f{amp.name} does not support {spk.impedance} Ohm")
+        raise ValueError("f{amp.reference} does not support {spk.impedance} Ohm")
     if impedance > spk.impedance:  # Example: F221 cannot be 8 Ohm
-        raise ValueError("f{spk.name} impedance cannot be higher than {spk.impedance} Ohm")
+        raise ValueError("f{spk.reference} impedance cannot be higher than {spk.impedance} Ohm")
 
     # Update power values that we will use depending on current impedance
     spk_power = spk.power * (spk.impedance / impedance)
@@ -112,35 +103,45 @@ class Window(QWidget):
         # Get amplis and speakers data
         self.amplis, self.speakers = getSpecs(INVENTORY_PATH)
 
-        # Amp, speaker and impedance row
+        # Ampli row
         self.amplisListWidget = QListWidget()
         for ampli in self.amplis:
             self.amplisListWidget.addItem(QListWidgetItem(self.tr(ampli)))
         self.amplisListWidget.setCurrentRow(0)
-        self.amplisListWidget.setMinimumWidth(2 * self.amplisListWidget.sizeHintForColumn(0) + self.amplisListWidget.frameWidth())
-        self.amplisListWidget.setMinimumHeight(
-            self.amplisListWidget.sizeHintForRow(0) * self.amplisListWidget.count() + 2 * self.amplisListWidget.frameWidth()
+        self.amplisListWidget.setMinimumWidth(
+            self._computeMinimumWidth(self.amplisListWidget) + self.amplisListWidget.frameWidth() * 10
         )
+        self.amplisListWidget.setMinimumHeight(
+            self.amplisListWidget.sizeHintForRow(0) * self.amplisListWidget.count()
+            + 10 * self.amplisListWidget.frameWidth()
+        )
+
+        # Speaker row
         self.speakersListWidget = QListWidget()
         for speaker in self.speakers:
             self.speakersListWidget.addItem(QListWidgetItem(self.tr(speaker)))
         self.speakersListWidget.setCurrentRow(0)
         self.speakersListWidget.setMinimumWidth(
-            2 * self.speakersListWidget.sizeHintForColumn(0) + self.speakersListWidget.frameWidth()
+            self._computeMinimumWidth(self.speakersListWidget) + self.speakersListWidget.frameWidth() * 10
         )
         self.speakersListWidget.setMinimumHeight(
-            self.speakersListWidget.sizeHintForRow(0) * self.speakersListWidget.count() + 2 * self.speakersListWidget.frameWidth()
+            self.speakersListWidget.sizeHintForRow(0) * self.speakersListWidget.count()
+            + 10 * self.speakersListWidget.frameWidth()
         )
+
+        # Impedance row
         self.impedanceListWidget = QListWidget()
         for impedance in [2, 4, 8]:
             self.impedanceListWidget.addItem(QListWidgetItem(self.tr(str(impedance))))
         self.impedanceListWidget.setCurrentRow(0)
         self.impedanceListWidget.setMinimumWidth(
-            2 * self.impedanceListWidget.sizeHintForColumn(0) + self.impedanceListWidget.frameWidth()
+            self._computeMinimumWidth(self.impedanceListWidget) + self.impedanceListWidget.frameWidth() * 10
         )
         self.impedanceListWidget.setMinimumHeight(
-            self.impedanceListWidget.sizeHintForRow(0) * self.impedanceListWidget.count() + 2 * self.impedanceListWidget.frameWidth()
+            self.impedanceListWidget.sizeHintForRow(0) * self.impedanceListWidget.count()
+            + 10 * self.impedanceListWidget.frameWidth()
         )
+
         selectionRow = QHBoxLayout()
         selectionRow.addWidget(self.amplisListWidget)
         selectionRow.addWidget(self.speakersListWidget)
@@ -161,6 +162,15 @@ class Window(QWidget):
         self.setLayout(mainLayout)
 
         self.show()
+
+    def _computeMinimumWidth(self, listWidget: QListWidget) -> int:
+        """Return max length of a QListWidget so we have its minimum width."""
+
+        res = listWidget.sizeHintForColumn(0)
+        for i in range(listWidget.count()):
+            if listWidget.sizeHintForColumn(i) > res:
+                res = listWidget.sizeHintForColumn(i)
+        return res
 
     def _updateLimit(self):
         """Update limiter value."""
