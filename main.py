@@ -21,6 +21,7 @@ from amplifier import Amplifier
 from speaker import Speaker
 
 
+OHM = "\u2126"
 APP_NAME = "LimiterRMS"
 INVENTORY_NAME = r"inventory.xlsx"
 INVENTORY_PATH = str(Path(__file__).parent.resolve()) + "\\" + INVENTORY_NAME
@@ -72,9 +73,9 @@ def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.7
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
 
     if not amp.power.get(impedance):
-        raise ValueError("f{amp.reference} does not support {spk.impedance} Ohm")
+        raise ValueError(f"{amp.reference} does not support {spk.impedance} Ohm")
     if impedance > spk.impedance:  # Example: F221 cannot be 8 Ohm
-        raise ValueError("f{spk.reference} impedance cannot be higher than {spk.impedance} Ohm")
+        raise ValueError(f"{spk.reference} impedance cannot be higher than {spk.impedance} Ohm")
 
     # Update power values that we will use depending on current impedance
     spk_power = spk.power * (spk.impedance / impedance)
@@ -142,23 +143,59 @@ class Window(QWidget):
             + 10 * self.impedanceListWidget.frameWidth()
         )
 
-        selectionRow = QHBoxLayout()
-        selectionRow.addWidget(self.amplisListWidget)
-        selectionRow.addWidget(self.speakersListWidget)
-        selectionRow.addWidget(self.impedanceListWidget)
+        # Selection layout
+        selectionLayout = QHBoxLayout()
+        selectionLayout.addWidget(self.amplisListWidget)
+        selectionLayout.addWidget(self.speakersListWidget)
+        selectionLayout.addWidget(self.impedanceListWidget)
 
-        # Compute row
-        computeButton = QPushButton("Compute RMS Limiter")
-        computeButton.clicked.connect(self._updateLimit)
+        # Left of recap layout are text labels
+        self.impedanceText = QLabel("Impedance:")
+        self.speakerPowerText = QLabel("Speaker power:")
+        self.ampliPowerText = QLabel("Ampli power:")
+        self.ampliGainText = QLabel("Ampli gain:")
+        self.tresholdText = QLabel("Treshold:")
+        self.tresholdText.setStyleSheet("color: red")
 
-        # Result row
-        self.resultLabel = QLabel("")
+        # Text layout
+        recapKeyLayout = QVBoxLayout()
+        recapKeyLayout.addWidget(self.impedanceText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapKeyLayout.addWidget(self.speakerPowerText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapKeyLayout.addWidget(self.ampliPowerText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapKeyLayout.addWidget(self.ampliGainText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapKeyLayout.addWidget(self.tresholdText, alignment=Qt.AlignmentFlag.AlignRight)
+
+        # Right of recap layout are value labels, those will update on user choices in lists
+        self.impedanceValue = QLabel()
+        self.speakerPowerValue = QLabel()
+        self.ampliPowerValue = QLabel()
+        self.ampliGainValue = QLabel()
+        self.tresholdValue = QLabel()
+        self.tresholdValue.setStyleSheet("color: red")
+
+        # Values layout
+        recapValuesLayout = QVBoxLayout()
+        recapValuesLayout.addWidget(self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.speakerPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.ampliGainValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft)
+
+        # Connections with labels and set default values at start
+        self.amplisListWidget.itemSelectionChanged.connect(self._updateValues)
+        self.speakersListWidget.itemSelectionChanged.connect(self._updateValues)
+        self.impedanceListWidget.itemSelectionChanged.connect(self._updateValues)
+        self._updateValues()
+
+        # Recap layout
+        recapLayout = QHBoxLayout()
+        recapLayout.addLayout(recapKeyLayout)
+        recapLayout.addLayout(recapValuesLayout)
 
         # Main layout
         mainLayout = QVBoxLayout(self)
-        mainLayout.addLayout(selectionRow)
-        mainLayout.addWidget(computeButton, alignment=Qt.AlignmentFlag.AlignCenter)
-        mainLayout.addWidget(self.resultLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        mainLayout.addLayout(selectionLayout)
+        mainLayout.addLayout(recapLayout)
         self.setLayout(mainLayout)
 
         self.show()
@@ -172,19 +209,26 @@ class Window(QWidget):
                 res = listWidget.sizeHintForColumn(i)
         return res
 
-    def _updateLimit(self):
+    def _updateValues(self):
         """Update limiter value."""
 
         # Get selected speaker, ampli and impedance
         spk = self.speakersListWidget.currentItem().text()
-        amp = self.amplisListWidget.currentItem().text()
-        impedance = self.impedanceListWidget.currentItem().text()
+        ampli = self.amplisListWidget.currentItem().text()
+        impedance = int(self.impedanceListWidget.currentItem().text())
 
         # Compute limit
-        res = limit(self.speakers[spk], self.amplis[amp], int(impedance))
+        speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
+        ampliPower = self.amplis[ampli].power[impedance]
+        ampliGain = self.amplis[ampli].gain
+        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
-        # Update result label
-        self.resultLabel.setText(f"{res}")
+        # Update labels
+        self.impedanceValue.setText(f"{impedance} {OHM}")
+        self.speakerPowerValue.setText(f"{speakerPower} Watts AES")
+        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS")
+        self.ampliGainValue.setText(f"{ampliGain} dB")
+        self.tresholdValue.setText(f"{treshold} dBu")
 
 
 def run() -> None:
