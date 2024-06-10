@@ -1,6 +1,9 @@
 class Amplifier:
-    def __init__(self, reference: str, gain: int, power: dict, outputs: int) -> None:
+    def __init__(self, reference: str, gain: float, power: dict[int, int | None], outputs: int | None) -> None:
         """Init all attributes.
+
+        If one value is None then it means info is missing.
+        This can only be true for power and ouputs.
 
         Parameters:
             reference: Ampli complete reference, for instance "t.amp TSA 4-1300"

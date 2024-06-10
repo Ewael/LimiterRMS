@@ -2,7 +2,7 @@ import sys
 
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
 from pandas import read_excel
-from math import log10, sqrt
+from math import log10, sqrt, isnan
 from pathlib import Path
 
 from PySide6.QtWidgets import (
@@ -12,7 +12,6 @@ from PySide6.QtWidgets import (
     QHBoxLayout,
     QVBoxLayout,
     QWidget,
-    QPushButton,
     QLabel,
 )
 from PySide6.QtCore import Qt
@@ -46,7 +45,13 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
     data_spk = read_excel(
         path,
         sheet_name="speakers",
-        dtype={"reference": str, "impedance": int, "power": int, "response": str, "baffle": str},
+        dtype={
+            "reference": str,
+            "impedance": int,
+            "power": int,
+            "response": str,
+            "baffle": str,
+        },
     ).to_dict(orient="records")
 
     amplis, speakers = {}, {}
@@ -54,8 +59,12 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
         amplis[amp["reference"]] = Amplifier(
             reference=amp["reference"],
             gain=amp["gain"],
-            power={8: amp["power_8ohm"], 4: amp["power_4ohm"], 2: amp["power_2ohm"]},
-            outputs=amp["outputs"],
+            power={
+                8: int(amp["power_8ohm"]) if not isnan(amp["power_8ohm"]) else None,
+                4: int(amp["power_4ohm"]) if not isnan(amp["power_4ohm"]) else None,
+                2: int(amp["power_2ohm"]) if not isnan(amp["power_2ohm"]) else None,
+            },
+            outputs=int(amp["outputs"]) if not isnan(amp["outputs"]) else None,
         )
     for spk in data_spk:
         speakers[spk["reference"]] = Speaker(
@@ -106,8 +115,17 @@ class Window(QWidget):
 
         # Ampli row
         self.amplisListWidget = QListWidget()
-        for ampli in self.amplis:
-            self.amplisListWidget.addItem(QListWidgetItem(self.tr(ampli)))
+        for ampli in self.amplis.values():
+            item = QListWidgetItem(self.tr(ampli.reference))
+            item.setToolTip(
+                f"{ampli.reference}\n\n"
+                + f"gain: {ampli.gain}dB\n"
+                + f"power (8{OHM}): {str(ampli.power[8])+'W' if ampli.power[8] else 'Missing'}\n"
+                + f"power (4{OHM}): {str(ampli.power[4])+'W' if ampli.power[4] else 'Missing'}\n"
+                + f"power (2{OHM}): {str(ampli.power[2])+'W' if ampli.power[2] else 'Missing'}\n"
+                + f"ouputs number: {ampli.outputs}"
+            )
+            self.amplisListWidget.addItem(item)
         self.amplisListWidget.setCurrentRow(0)
         self.amplisListWidget.setMinimumWidth(
             self._computeMinimumWidth(self.amplisListWidget) + self.amplisListWidget.frameWidth() * 10
@@ -119,8 +137,16 @@ class Window(QWidget):
 
         # Speaker row
         self.speakersListWidget = QListWidget()
-        for speaker in self.speakers:
-            self.speakersListWidget.addItem(QListWidgetItem(self.tr(speaker)))
+        for speaker in self.speakers.values():
+            item = QListWidgetItem(self.tr(speaker.reference))
+            item.setToolTip(
+                f"{speaker.reference}\n\n"
+                + f"impedance: {speaker.impedance}{OHM}\n"
+                + f"power ({speaker.impedance}{OHM}): {speaker.power}W\n"
+                + f"frequency response: {speaker.response} Hz\n"
+                + f"baffle: {speaker.baffle}"
+            )
+            self.speakersListWidget.addItem(item)
         self.speakersListWidget.setCurrentRow(0)
         self.speakersListWidget.setMinimumWidth(
             self._computeMinimumWidth(self.speakersListWidget) + self.speakersListWidget.frameWidth() * 10
@@ -225,8 +251,8 @@ class Window(QWidget):
 
         # Update labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
-        self.speakerPowerValue.setText(f"{speakerPower} Watts AES")
-        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS")
+        self.speakerPowerValue.setText(f"{speakerPower} Watts AES (for {impedance} {OHM})")
+        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS (for {impedance} {OHM})")
         self.ampliGainValue.setText(f"{ampliGain} dB")
         self.tresholdValue.setText(f"{treshold} dBu")
 
