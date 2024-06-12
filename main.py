@@ -1,10 +1,10 @@
 import sys
+import json
 
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
-from pandas import read_excel
 from math import log10, sqrt, isnan
 from pathlib import Path
-
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
@@ -14,7 +14,6 @@ from PySide6.QtWidgets import (
     QWidget,
     QLabel,
 )
-from PySide6.QtCore import Qt
 
 from amplifier import Amplifier
 from speaker import Speaker
@@ -22,51 +21,44 @@ from speaker import Speaker
 
 OHM = "\u2126"
 APP_NAME = "LimiterRMS"
-INVENTORY_NAME = r"inventory.xlsx"
-INVENTORY_PATH = str(Path(__file__).parent.resolve()) + "\\" + INVENTORY_NAME
+AMPLIFIERS = r"amplifiers.json"
+SPEAKERS = r"speakers.json"
+BASE_PATH = str(Path(__file__).parent.resolve()) + "\\"
 
 
-def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
-    """Return list of speakers & amplifiers specs from inventory."""
+def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
+    """Return amplifiers specs from given JSON file.
 
-    data_amp = read_excel(
-        path,
-        sheet_name="amplifiers",
-        # We can not precise type for optionnal columns
-        dtype={
-            "reference": str,
-            "gain": float,
-            # "power_8ohm": int,
-            # "power_4ohm": int,
-            # "power_2ohm": int,
-            # "outputs": int,
-        },
-    ).to_dict(orient="records")
-    data_spk = read_excel(
-        path,
-        sheet_name="speakers",
-        dtype={
-            "reference": str,
-            "impedance": int,
-            "power": int,
-            "response": str,
-            "baffle": str,
-        },
-    ).to_dict(orient="records")
+    Only ['power']['8/4/2'] and ['outputs'] are optional and can be equal to None.
+    """
 
-    amplis, speakers = {}, {}
-    for amp in data_amp:
-        amplis[amp["reference"]] = Amplifier(
-            reference=amp["reference"],
-            gain=amp["gain"],
+    with open(path) as f:
+        amplisData = json.load(f)
+    amplis = {}
+    for ampli in amplisData:
+        amplis[ampli["reference"]] = Amplifier(
+            reference=ampli["reference"],
+            gain=ampli["gain"],
             power={
-                8: int(amp["power_8ohm"]) if not isnan(amp["power_8ohm"]) else None,
-                4: int(amp["power_4ohm"]) if not isnan(amp["power_4ohm"]) else None,
-                2: int(amp["power_2ohm"]) if not isnan(amp["power_2ohm"]) else None,
+                8: ampli["power"].get("8"),
+                4: ampli["power"].get("4"),
+                2: ampli["power"].get("2"),
             },
-            outputs=int(amp["outputs"]) if not isnan(amp["outputs"]) else None,
+            outputs=ampli.get("outputs"),
         )
-    for spk in data_spk:
+    return amplis
+
+
+def getSpeakersSpecs(path: str) -> dict[str, Speaker]:
+    """Return speakers specs from given JSON file.
+
+    No optional values here.
+    """
+
+    with open(path) as f:
+        speakersData = json.load(f)
+    speakers = {}
+    for spk in speakersData:
         speakers[spk["reference"]] = Speaker(
             reference=spk["reference"],
             impedance=spk["impedance"],
@@ -74,8 +66,7 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
             response=spk["response"],
             baffle=spk["baffle"],
         )
-
-    return amplis, speakers
+    return speakers
 
 
 def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.775) -> Decimal:
@@ -106,7 +97,8 @@ class Window(QWidget):
         self.setGeometry(600, 300, 800, 500)
 
         # Get amplis and speakers data
-        self.amplis, self.speakers = getSpecs(INVENTORY_PATH)
+        self.amplis = getAmplisSpecs(BASE_PATH + AMPLIFIERS)
+        self.speakers = getSpeakersSpecs(BASE_PATH + SPEAKERS)
 
         # Ampli row
         self.amplisListWidget = QListWidget()

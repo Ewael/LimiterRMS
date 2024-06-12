@@ -1,0 +1,114 @@
+[
+    {
+        "reference": "BPH238",
+        "impedance": 4,
+        "power": 1000,
+        "response": "70-750",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Eric Audio LA8C High",
+        "impedance": 8,
+        "power": 320,
+        "response": "2.2k-18k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Eric Audio LA8C Low",
+        "impedance": 8,
+        "power": 500,
+        "response": "50-330",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Eric Audio LA8C Mid",
+        "impedance": 8,
+        "power": 400,
+        "response": "330-2.2k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Eric Audio LA8C Sub",
+        "impedance": 4,
+        "power": 1000,
+        "response": "32-200",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Funktion One F221",
+        "impedance": 4,
+        "power": 2000,
+        "response": "20-200",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Orphee CLA 800",
+        "impedance": 8,
+        "power": 300,
+        "response": "55-20k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "MKH230",
+        "impedance": 4,
+        "power": 900,
+        "response": "80-800",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "MTH 4654 (RCF LF18X401)",
+        "impedance": 8,
+        "power": 1500,
+        "response": "30-200",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Nexo SI1000 High",
+        "impedance": 8,
+        "power": 150,
+        "response": "800-18k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Nexo SI1000 Mid",
+        "impedance": 8,
+        "power": 350,
+        "response": "220-3.5k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Nexo SI1000 Kick",
+        "impedance": 4,
+        "power": 600,
+        "response": "45-500",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Orphee CLA 1201D",
+        "impedance": 8,
+        "power": 700,
+        "response": "75-20k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Turbosound TMS3 High",
+        "impedance": 8,
+        "power": 75,
+        "response": "3.7k-17k",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Turbosound TMS3 Low",
+        "impedance": 4,
+        "power": 500,
+        "response": "55-250",
+        "baffle": "SEALED"
+    },
+    {
+        "reference": "Turbosound TMS3 Mid",
+        "impedance": 8,
+        "power": 200,
+        "response": "250-3.7k",
+        "baffle": "SEALED"
+    }
+]

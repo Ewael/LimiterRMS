@@ -1,0 +1,90 @@
+[
+    {
+        "reference": "Crest Audio 7001",
+        "gain": 40,
+        "power": {
+            "8": 550,
+            "4": 715,
+            "2": 850
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Crest Audio 9001",
+        "gain": 40,
+        "power": {
+            "8": 1100,
+            "4": 2050,
+            "2": 3000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "TPA FP14000",
+        "gain": 35,
+        "power": {
+            "8": 2350,
+            "4": 4400,
+            "2": 7000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A5000",
+        "gain": 36,
+        "power": {
+            "8": 1100,
+            "4": 1800,
+            "2": 2500
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "L-Acoustics LA24",
+        "gain": 32,
+        "power": {
+            "8": 1100,
+            "4": 1500,
+            "2": 1700
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Lab Gruppen MA6.8Q",
+        "gain": 35,
+        "power": {
+            "8": 1200,
+            "4": 1700
+        },
+        "outputs": 4
+    },
+    {
+        "reference": "Crown Macro-Tech 1200",
+        "gain": 26,
+        "power": {
+            "8": 310,
+            "4": 480,
+            "2": 675
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Crown Micro-Tech 1200",
+        "gain": 26,
+        "power": {
+            "8": 295,
+            "4": 450,
+            "2": 585
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "t.amp TSA 4-1300",
+        "gain": 37.8,
+        "power": {
+            "8": 1220,
+            "4": 1670
+        },
+        "outputs": 4
+    }
+]
