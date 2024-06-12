@@ -2,7 +2,7 @@ import sys
 import json
 
 from decimal import Decimal, ROUND_DOWN, ROUND_UP
-from math import log10, sqrt, isnan
+from math import log10, sqrt
 from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -103,8 +103,8 @@ class Window(QWidget):
         self.speakers = getSpeakersSpecs(BASE_PATH + SPEAKERS)
 
         # Amplis layout
-        amplisColumnLabel = QLabel("Amplifiers")
-        amplisColumnLabel.setStyleSheet("font-weight: bold")
+        amplisColumnNameLabel = QLabel("Amplifiers")
+        amplisColumnNameLabel.setStyleSheet("font-weight: bold")
         self.amplisListWidget = QListWidget()
         for ampli in self.amplis.values():
             item = QListWidgetItem(self.tr(ampli.reference))
@@ -125,13 +125,13 @@ class Window(QWidget):
             self.amplisListWidget.sizeHintForRow(0) * self.amplisListWidget.count()
             + 10 * self.amplisListWidget.frameWidth()
         )
-        amplisLayout = QVBoxLayout()
-        amplisLayout.addWidget(amplisColumnLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        amplisLayout.addWidget(self.amplisListWidget)
+        amplisSelectionLayout = QVBoxLayout()
+        amplisSelectionLayout.addWidget(amplisColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        amplisSelectionLayout.addWidget(self.amplisListWidget)
 
         # Speakers layout
-        speakersColumnLabel = QLabel("Speakers")
-        speakersColumnLabel.setStyleSheet("font-weight: bold")
+        speakersColumnNameLabel = QLabel("Speakers")
+        speakersColumnNameLabel.setStyleSheet("font-weight: bold")
         self.speakersListWidget = QListWidget()
         for speaker in self.speakers.values():
             item = QListWidgetItem(self.tr(speaker.reference))
@@ -151,13 +151,13 @@ class Window(QWidget):
             self.speakersListWidget.sizeHintForRow(0) * self.speakersListWidget.count()
             + 10 * self.speakersListWidget.frameWidth()
         )
-        speakersLayout = QVBoxLayout()
-        speakersLayout.addWidget(speakersColumnLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        speakersLayout.addWidget(self.speakersListWidget)
+        speakersSelectionLayout = QVBoxLayout()
+        speakersSelectionLayout.addWidget(speakersColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        speakersSelectionLayout.addWidget(self.speakersListWidget)
 
         # Impedance row
-        impedanceColumnLabel = QLabel("Impedance")
-        impedanceColumnLabel.setStyleSheet("font-weight: bold")
+        impedanceColumnNameLabel = QLabel("Impedance")
+        impedanceColumnNameLabel.setStyleSheet("font-weight: bold")
         self.impedanceListWidget = QListWidget()
         for impedance in [2, 4, 8]:
             self.impedanceListWidget.addItem(QListWidgetItem(self.tr(str(impedance))))
@@ -169,33 +169,59 @@ class Window(QWidget):
             self.impedanceListWidget.sizeHintForRow(0) * self.impedanceListWidget.count()
             + 10 * self.impedanceListWidget.frameWidth()
         )
-        impedanceLayout = QVBoxLayout()
-        impedanceLayout.addWidget(impedanceColumnLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        impedanceLayout.addWidget(self.impedanceListWidget)
+        impedanceSelectionLayout = QVBoxLayout()
+        impedanceSelectionLayout.addWidget(impedanceColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        impedanceSelectionLayout.addWidget(self.impedanceListWidget)
 
         # Selection layout
         selectionLayout = QHBoxLayout()
-        selectionLayout.addLayout(amplisLayout)
-        selectionLayout.addLayout(speakersLayout)
-        selectionLayout.addLayout(impedanceLayout)
+        selectionLayout.addLayout(amplisSelectionLayout)
+        selectionLayout.addLayout(speakersSelectionLayout)
+        selectionLayout.addLayout(impedanceSelectionLayout)
 
-        # Left of recap layout are text labels
-        self.impedanceText = QLabel("Impedance:")
-        self.speakerBaffleText = QLabel("Speaker baffle:")
-        self.speakerPowerText = QLabel("Speaker power:")
-        self.ampliPowerText = QLabel("Ampli power:")
-        self.ampliGainText = QLabel("Ampli gain:")
-        self.tresholdText = QLabel("Treshold:")
-        self.tresholdText.setStyleSheet("color: red; font-weight: bold")
+        # Impedance text
+        impedanceLabel = QLabel("Impedance:")
+
+        # Speaker text
+        speakerLabel = QLabel("Speaker")
+        self.selectedSpeakerLabel = QLabel()
+        speakerRecapLeft = QVBoxLayout()
+        speakerRecapLeft.addWidget(speakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        speakerRecapLeft.addWidget(self.selectedSpeakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        speakerBaffleLabel = QLabel("Baffle:")
+        speakerPowerLabel = QLabel("Power:")
+        speakerRecapRight = QVBoxLayout()
+        speakerRecapRight.addWidget(speakerBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        speakerRecapRight.addWidget(speakerPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        speakerRecapLayout = QHBoxLayout()
+        speakerRecapLayout.addLayout(speakerRecapLeft)
+        speakerRecapLayout.addLayout(speakerRecapRight)
+
+        # Ampli text
+        ampliLabel = QLabel("Amplifier")
+        self.selectedAmpliLabel = QLabel()
+        ampliRecapLeft = QVBoxLayout()
+        ampliRecapLeft.addWidget(ampliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        ampliRecapLeft.addWidget(self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        ampliBaffleLabel = QLabel("Gain:")
+        ampliPowerLabel = QLabel("Power:")
+        ampliRecapRight = QVBoxLayout()
+        ampliRecapRight.addWidget(ampliBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        ampliRecapRight.addWidget(ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        ampliRecapLayout = QHBoxLayout()
+        ampliRecapLayout.addLayout(ampliRecapLeft)
+        ampliRecapLayout.addLayout(ampliRecapRight)
+
+        # Treshold
+        tresholdLabel = QLabel("Treshold:")
+        tresholdLabel.setStyleSheet("color: red; font-weight: bold")
 
         # Text layout
-        recapKeyLayout = QVBoxLayout()
-        recapKeyLayout.addWidget(self.impedanceText, alignment=Qt.AlignmentFlag.AlignRight)
-        recapKeyLayout.addWidget(self.speakerBaffleText, alignment=Qt.AlignmentFlag.AlignRight)
-        recapKeyLayout.addWidget(self.speakerPowerText, alignment=Qt.AlignmentFlag.AlignRight)
-        recapKeyLayout.addWidget(self.ampliPowerText, alignment=Qt.AlignmentFlag.AlignRight)
-        recapKeyLayout.addWidget(self.ampliGainText, alignment=Qt.AlignmentFlag.AlignRight)
-        recapKeyLayout.addWidget(self.tresholdText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout = QVBoxLayout()
+        recapLabelsLayout.addWidget(impedanceLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout.addLayout(speakerRecapLayout)
+        recapLabelsLayout.addLayout(ampliRecapLayout)
+        recapLabelsLayout.addWidget(tresholdLabel, alignment=Qt.AlignmentFlag.AlignRight)
 
         # Right of recap layout are value labels, those will update on user choices in lists
         self.impedanceValue = QLabel()
@@ -223,7 +249,7 @@ class Window(QWidget):
 
         # Recap layout
         recapLayout = QHBoxLayout()
-        recapLayout.addLayout(recapKeyLayout)
+        recapLayout.addLayout(recapLabelsLayout)
         recapLayout.addLayout(recapValuesLayout)
 
         # Main layout
@@ -251,6 +277,10 @@ class Window(QWidget):
         ampli = self.amplisListWidget.currentItem().text()
         impedance = int(self.impedanceListWidget.currentItem().text())
 
+        # Update selected labels
+        self.selectedSpeakerLabel.setText(f"({spk})")
+        self.selectedAmpliLabel.setText(f"({ampli})")
+
         # Check if we can really compute treshold
         if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
             self.ampliPowerValue.setText(f"{self.amplis[ampli].reference} does not support {impedance} {OHM}")
@@ -271,7 +301,7 @@ class Window(QWidget):
         ampliGain = self.amplis[ampli].gain
         treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
-        # Update labels
+        # Update value labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
         self.speakerBaffleValue.setText(f"{speakerBaffle}")
         self.speakerPowerValue.setText(f"{speakerPower} Watts AES (for {impedance} {OHM})")
