@@ -238,15 +238,24 @@ class Window(QWidget):
         ampli = self.amplisListWidget.currentItem().text()
         impedance = int(self.impedanceListWidget.currentItem().text())
 
+        # Check if we can really compute treshold
         if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
-            raise ValueError(f"{self.amplis[ampli].reference} does not support {impedance} {OHM}")
+            self.ampliPowerValue.setText(f"{self.amplis[ampli].reference} does not support {impedance} {OHM}")
+            self.tresholdValue.setText("Can't compute treshold")
+            return
         if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
-            raise ValueError(f"{self.speakers[spk].reference} impedance cannot be higher than {self.speakers[spk].impedance} {OHM}")
+            self.speakerPowerValue.setText(
+                f"{self.speakers[spk].reference} impedance cannot be higher than {self.speakers[spk].impedance} {OHM}"
+            )
 
-        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
+            self.tresholdValue.setText("Can't compute treshold")
+            return
+
+        # Get values and compute treshold
         speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
         ampliPower = self.amplis[ampli].power[impedance]
         ampliGain = self.amplis[ampli].gain
+        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
         # Update labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
