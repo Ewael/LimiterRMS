@@ -164,6 +164,7 @@ class Window(QWidget):
 
         # Left of recap layout are text labels
         self.impedanceText = QLabel("Impedance:")
+        self.speakerBaffleText = QLabel("Speaker baffle:")
         self.speakerPowerText = QLabel("Speaker power:")
         self.ampliPowerText = QLabel("Ampli power:")
         self.ampliGainText = QLabel("Ampli gain:")
@@ -173,6 +174,7 @@ class Window(QWidget):
         # Text layout
         recapKeyLayout = QVBoxLayout()
         recapKeyLayout.addWidget(self.impedanceText, alignment=Qt.AlignmentFlag.AlignRight)
+        recapKeyLayout.addWidget(self.speakerBaffleText, alignment=Qt.AlignmentFlag.AlignRight)
         recapKeyLayout.addWidget(self.speakerPowerText, alignment=Qt.AlignmentFlag.AlignRight)
         recapKeyLayout.addWidget(self.ampliPowerText, alignment=Qt.AlignmentFlag.AlignRight)
         recapKeyLayout.addWidget(self.ampliGainText, alignment=Qt.AlignmentFlag.AlignRight)
@@ -180,6 +182,7 @@ class Window(QWidget):
 
         # Right of recap layout are value labels, those will update on user choices in lists
         self.impedanceValue = QLabel()
+        self.speakerBaffleValue = QLabel()
         self.speakerPowerValue = QLabel()
         self.ampliPowerValue = QLabel()
         self.ampliGainValue = QLabel()
@@ -189,6 +192,7 @@ class Window(QWidget):
         # Values layout
         recapValuesLayout = QVBoxLayout()
         recapValuesLayout.addWidget(self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.speakerBaffleValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.speakerPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.ampliGainValue, alignment=Qt.AlignmentFlag.AlignLeft)
@@ -244,6 +248,7 @@ class Window(QWidget):
             return
 
         # Get values and compute treshold
+        speakerBaffle = self.speakers[spk].baffle
         speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
         ampliPower = self.amplis[ampli].power[impedance]
         ampliGain = self.amplis[ampli].gain
@@ -251,6 +256,7 @@ class Window(QWidget):
 
         # Update labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
+        self.speakerBaffleValue.setText(f"{speakerBaffle}")
         self.speakerPowerValue.setText(f"{speakerPower} Watts AES (for {impedance} {OHM})")
         self.ampliPowerValue.setText(f"{ampliPower} Watts RMS (for {impedance} {OHM})")
         self.ampliGainValue.setText(f"{ampliGain} dB")
