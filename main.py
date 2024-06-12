@@ -81,11 +81,6 @@ def getSpecs(path: str) -> tuple[dict[str, Amplifier], dict[str, Speaker]]:
 def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.775) -> Decimal:
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
 
-    if not amp.power.get(impedance):
-        raise ValueError(f"{amp.reference} does not support {spk.impedance} Ohm")
-    if impedance > spk.impedance:  # Example: F221 cannot be 8 Ohm
-        raise ValueError(f"{spk.reference} impedance cannot be higher than {spk.impedance} Ohm")
-
     # Update power values that we will use depending on current impedance
     spk_power = spk.power * (spk.impedance / impedance)
     amp_power = amp.power[impedance]
@@ -243,11 +238,15 @@ class Window(QWidget):
         ampli = self.amplisListWidget.currentItem().text()
         impedance = int(self.impedanceListWidget.currentItem().text())
 
-        # Compute limit
+        if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
+            raise ValueError(f"{self.amplis[ampli].reference} does not support {impedance} {OHM}")
+        if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
+            raise ValueError(f"{self.speakers[spk].reference} impedance cannot be higher than {self.speakers[spk].impedance} {OHM}")
+
+        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
         speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
         ampliPower = self.amplis[ampli].power[impedance]
         ampliGain = self.amplis[ampli].gain
-        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
         # Update labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
