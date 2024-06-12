@@ -34,6 +34,7 @@ def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
 
     with open(path) as f:
         amplisData = json.load(f)
+        amplisData.sort(key=lambda x: x["reference"])
     amplis = {}
     for ampli in amplisData:
         amplis[ampli["reference"]] = Amplifier(
@@ -57,6 +58,7 @@ def getSpeakersSpecs(path: str) -> dict[str, Speaker]:
 
     with open(path) as f:
         speakersData = json.load(f)
+        speakersData.sort(key=lambda x: x["reference"])
     speakers = {}
     for spk in speakersData:
         speakers[spk["reference"]] = Speaker(
