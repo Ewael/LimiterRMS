@@ -220,8 +220,8 @@ class Window(QWidget):
         recapValuesLayout.addWidget(self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.speakerBaffleValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.speakerPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapValuesLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.ampliGainValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapValuesLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Connections with labels and set default values at start
@@ -269,32 +269,27 @@ class Window(QWidget):
         self.selectedSpeakerLabel.setText(f"({spk})")
         self.selectedAmpliLabel.setText(f"({ampli})")
 
-        # Check if we can really compute treshold
+        # Check if configuration is possible, if not then switch to custom
         if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
-            self.ampliPowerValue.setText(f"{self.amplis[ampli].reference} does not support {impedance} {OHM}")
+            self.ampliPowerValue.setText(f"Missing")
             self.tresholdValue.setText("Can't compute treshold")
             return
         if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
-            self.speakerPowerValue.setText(
-                f"{self.speakers[spk].reference} impedance cannot be higher than {self.speakers[spk].impedance} {OHM}"
-            )
-
-            self.tresholdValue.setText("Can't compute treshold")
-            return
+            self.selectedSpeakerLabel.setText(f"(Custom)")
 
         # Get values and compute treshold
         speakerBaffle = self.speakers[spk].baffle
         speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
-        ampliPower = self.amplis[ampli].power[impedance]
         ampliGain = self.amplis[ampli].gain
+        ampliPower = self.amplis[ampli].power[impedance]
         treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
         # Update value labels
         self.impedanceValue.setText(f"{impedance} {OHM}")
         self.speakerBaffleValue.setText(f"{speakerBaffle}")
         self.speakerPowerValue.setText(f"{speakerPower} Watts AES (for {impedance} {OHM})")
-        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS (for {impedance} {OHM})")
         self.ampliGainValue.setText(f"{ampliGain} dB")
+        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS (for {impedance} {OHM})")
         self.tresholdValue.setText(f"{treshold} dBu")
 
 
