@@ -270,12 +270,14 @@ class Window(QWidget):
         self.selectedAmpliLabel.setText(f"({ampli})")
 
         # Check if configuration is possible, if not then switch to custom
+        warning = ""
         if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
             self.ampliPowerValue.setText(f"Missing")
             self.tresholdValue.setText("Can't compute treshold")
             return
         if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
             self.selectedSpeakerLabel.setText(f"(Custom)")
+            warning = f" (Warning: {spk} cannot be {impedance} {OHM})"
 
         # Get values and compute treshold
         speakerBaffle = self.speakers[spk].baffle
@@ -285,11 +287,11 @@ class Window(QWidget):
         treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
 
         # Update value labels
-        self.impedanceValue.setText(f"{impedance} {OHM}")
+        self.impedanceValue.setText(f"{impedance} {OHM}" + warning)
         self.speakerBaffleValue.setText(f"{speakerBaffle}")
-        self.speakerPowerValue.setText(f"{speakerPower} Watts AES (for {impedance} {OHM})")
+        self.speakerPowerValue.setText(f"{speakerPower} Watts AES")
         self.ampliGainValue.setText(f"{ampliGain} dB")
-        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS (for {impedance} {OHM})")
+        self.ampliPowerValue.setText(f"{ampliPower} Watts RMS")
         self.tresholdValue.setText(f"{treshold} dBu")
 
 
