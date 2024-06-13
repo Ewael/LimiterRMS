@@ -179,51 +179,36 @@ class Window(QWidget):
         selectionLayout.addLayout(speakersSelectionLayout)
         selectionLayout.addLayout(impedanceSelectionLayout)
 
-        # Impedance text
-        impedanceLabel = QLabel("Impedance:")
-
-        # Speaker text
+        # Selected layout
         speakerLabel = QLabel("Speaker")
+        ampliLabel = QLabel("Amplifier")
         self.selectedSpeakerLabel = QLabel()
-        speakerRecapLeft = QVBoxLayout()
-        speakerRecapLeft.addWidget(speakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        speakerRecapLeft.addWidget(self.selectedSpeakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.selectedAmpliLabel = QLabel()
+        recapSelectedLayout = QVBoxLayout()
+        recapSelectedLayout.addWidget(QLabel())  # Empty for impedance row
+        recapSelectedLayout.addWidget(speakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        recapSelectedLayout.addWidget(self.selectedSpeakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        recapSelectedLayout.addWidget(ampliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        recapSelectedLayout.addWidget(self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        recapSelectedLayout.addWidget(QLabel())  # Empty for treshold row
+
+        # Recap labels layout
+        impedanceLabel = QLabel("Impedance:")
         speakerBaffleLabel = QLabel("Baffle:")
         speakerPowerLabel = QLabel("Power:")
-        speakerRecapRight = QVBoxLayout()
-        speakerRecapRight.addWidget(speakerBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        speakerRecapRight.addWidget(speakerPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        speakerRecapLayout = QHBoxLayout()
-        speakerRecapLayout.addLayout(speakerRecapLeft)
-        speakerRecapLayout.addLayout(speakerRecapRight)
-
-        # Ampli text
-        ampliLabel = QLabel("Amplifier")
-        self.selectedAmpliLabel = QLabel()
-        ampliRecapLeft = QVBoxLayout()
-        ampliRecapLeft.addWidget(ampliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        ampliRecapLeft.addWidget(self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        ampliBaffleLabel = QLabel("Gain:")
+        ampliGainLabel = QLabel("Gain:")
         ampliPowerLabel = QLabel("Power:")
-        ampliRecapRight = QVBoxLayout()
-        ampliRecapRight.addWidget(ampliBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        ampliRecapRight.addWidget(ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        ampliRecapLayout = QHBoxLayout()
-        ampliRecapLayout.addLayout(ampliRecapLeft)
-        ampliRecapLayout.addLayout(ampliRecapRight)
-
-        # Treshold
         tresholdLabel = QLabel("Treshold:")
         tresholdLabel.setStyleSheet("color: red; font-weight: bold")
-
-        # Text layout
         recapLabelsLayout = QVBoxLayout()
         recapLabelsLayout.addWidget(impedanceLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addLayout(speakerRecapLayout)
-        recapLabelsLayout.addLayout(ampliRecapLayout)
+        recapLabelsLayout.addWidget(speakerBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout.addWidget(speakerPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout.addWidget(ampliGainLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout.addWidget(ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
         recapLabelsLayout.addWidget(tresholdLabel, alignment=Qt.AlignmentFlag.AlignRight)
 
-        # Right of recap layout are value labels, those will update on user choices in lists
+        # Recap values layout
         self.impedanceValue = QLabel()
         self.speakerBaffleValue = QLabel()
         self.speakerPowerValue = QLabel()
@@ -231,8 +216,6 @@ class Window(QWidget):
         self.ampliGainValue = QLabel()
         self.tresholdValue = QLabel()
         self.tresholdValue.setStyleSheet("color: red; font-weight: bold")
-
-        # Values layout
         recapValuesLayout = QVBoxLayout()
         recapValuesLayout.addWidget(self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapValuesLayout.addWidget(self.speakerBaffleValue, alignment=Qt.AlignmentFlag.AlignLeft)
@@ -248,8 +231,13 @@ class Window(QWidget):
         self._updateValues()
 
         # Recap layout
+        recapLayoutLeft = QHBoxLayout()
+        for _ in range(3):  # Spacers on the left
+            recapLayoutLeft.addWidget(QLabel())
+        recapLayoutLeft.addLayout(recapSelectedLayout)
+        recapLayoutLeft.addLayout(recapLabelsLayout)
         recapLayout = QHBoxLayout()
-        recapLayout.addLayout(recapLabelsLayout)
+        recapLayout.addLayout(recapLayoutLeft)
         recapLayout.addLayout(recapValuesLayout)
 
         # Main layout
