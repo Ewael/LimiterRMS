@@ -91,7 +91,7 @@ def computeTreshold(
     # We convert this RMS voltage to dBu at 0.775V sensitivity
     dBu_spk = 20 * log10(V_spk / sensitivity)
     # Then we remove gain of the amplifier
-    treshold_spk = dBu_spk - ampliGain
+    threshold_spk = dBu_spk - ampliGain
 
     # We do the same with amplifier power, factor is from Hornplans again
     ampliFactor = 2
@@ -102,8 +102,8 @@ def computeTreshold(
     # Gain substraction
     threshold_amp = dBu_amp - ampliGain
 
-    # We take the most strict treshold
-    treshold = min(treshold_spk, threshold_amp)
+    # We take the most strict treshold to protect ampli & speaker
+    treshold = min(threshold_spk, threshold_amp)
     treshold = Decimal(treshold).quantize(Decimal(".1"), rounding=(ROUND_DOWN if treshold > 0 else ROUND_UP))
 
     return treshold
