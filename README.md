@@ -14,6 +14,8 @@ $ pip install -r requirements.txt
 $ python ./limiterRMS.py
 ```
 
+![demo](resources/demo.png)
+
 ## Fix WAV files
 
 In `scripts/` folder you can find a script that fixes WAV files from [Bandcamp](https://bandcamp.com/).
