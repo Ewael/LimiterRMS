@@ -18,15 +18,15 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 
-from amplifier import Amplifier
-from speaker import Speaker
+from specs.amplifier import Amplifier
+from specs.speaker import Speaker
 
 
 OHM = "\u2126"
 APP_NAME = "LimiterRMS"
 AMPLIFIERS = r"amplifiers.json"
 SPEAKERS = r"speakers.json"
-BASE_PATH = str(Path(__file__).parent.resolve()) + "\\"
+BASE_PATH = str(Path(__file__).parent.resolve()) + "\\config\\"
 
 
 def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
