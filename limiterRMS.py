@@ -84,15 +84,29 @@ def limit(
 ) -> Decimal:
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
 
-    lim_spk = (
-        20 * log10(sqrt((speakerPower / (1.5625 if speakerBaffle == "OPEN" else 2.34375)) * impedance) / sensitivity)
-        - ampliGain
-    )
-    lim_amp = 20 * log10(sqrt((ampliPower / 2) * impedance) / sensitivity) - ampliGain
-    lim = min(lim_spk, lim_amp)
-    lim_dbU = Decimal(lim).quantize(Decimal(".1"), rounding=(ROUND_DOWN if lim > 0 else ROUND_UP))
+    # El famoso "smart limiter" from Hornplans
+    baffleFactor = 1.5625 if speakerBaffle == "OPEN" else 2.34375
+    # RMS voltage corresponding to given speaker power at given impedance
+    V_spk = sqrt((speakerPower / baffleFactor) * impedance)
+    # We convert this RMS voltage to dBu at 0.775V sensitivity
+    dBu_spk = 20 * log10(V_spk / sensitivity)
+    # Then we remove gain of the amplifier
+    treshold_spk = dBu_spk - ampliGain
 
-    return lim_dbU
+    # We do the same with amplifier power, factor is from Hornplans again
+    ampliFactor = 2
+    # RMS voltage corresponding to given amplifier power at given impedance
+    V_amp = sqrt((ampliPower / ampliFactor) * impedance)
+    # RMS to dBu conversion
+    dBu_amp = 20 * log10(V_amp / sensitivity)
+    # Gain substraction
+    threshold_amp = dBu_amp - ampliGain
+
+    # We take the most strict treshold
+    treshold = min(treshold_spk, threshold_amp)
+    treshold = Decimal(treshold).quantize(Decimal(".1"), rounding=(ROUND_DOWN if treshold > 0 else ROUND_UP))
+
+    return treshold
 
 
 class Window(QWidget):
