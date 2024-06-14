@@ -4,10 +4,9 @@ Just a quick UI to compute RMS limiters on passive speakers.
 
 ## Installation
 
-To run app, do the following:
+To run app, clone the repo and do the following:
 
 ```bash
-$ git clone https://github.com:Ewael/LimiterRMS
 $ cd ./LimiterRMS
 $ python -m venv venvLimiter
 $ ./venvLimiter/Scripts/activate
