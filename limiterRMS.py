@@ -74,7 +74,7 @@ def getSpeakersSpecs(path: str) -> dict[str, Speaker]:
     return speakers
 
 
-def limit(
+def computeTreshold(
     impedance: int,
     speakerBaffle: str,
     speakerPower: int,
@@ -410,7 +410,7 @@ class Window(QWidget):
             self.tresholdValue.setText("")
             return
 
-        treshold = limit(
+        treshold = computeTreshold(
             int(self.impedanceValue.text()),
             self.speakerBaffleValue.currentText(),
             int(self.speakerPowerValue.text()),
