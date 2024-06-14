@@ -5,7 +5,7 @@ from decimal import Decimal, ROUND_DOWN, ROUND_UP
 from math import log10, sqrt
 from pathlib import Path
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QDoubleValidator, QIntValidator
+from PySide6.QtGui import QDoubleValidator, QIntValidator, QMouseEvent
 from PySide6.QtWidgets import (
     QListWidget,
     QListWidgetItem,
@@ -74,18 +74,21 @@ def getSpeakersSpecs(path: str) -> dict[str, Speaker]:
     return speakers
 
 
-def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.775) -> Decimal:
+def limit(
+    impedance: int,
+    speakerBaffle: str,
+    speakerPower: int,
+    ampliGain: float,
+    ampliPower: int,
+    sensitivity: float = 0.775,
+) -> Decimal:
     """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
 
-    # Update power values that we will use depending on current impedance
-    spk_power = spk.power * (spk.impedance / impedance)
-    amp_power = amp.power[impedance]
-
     lim_spk = (
-        20 * log10(sqrt((spk_power / (1.5625 if spk.baffle == "OPEN" else 2.34375)) * impedance) / sensitivity)
-        - amp.gain
+        20 * log10(sqrt((speakerPower / (1.5625 if speakerBaffle == "OPEN" else 2.34375)) * impedance) / sensitivity)
+        - ampliGain
     )
-    lim_amp = 20 * log10(sqrt((amp_power / 2) * impedance) / sensitivity) - amp.gain
+    lim_amp = 20 * log10(sqrt((ampliPower / 2) * impedance) / sensitivity) - ampliGain
     lim = min(lim_spk, lim_amp)
     lim_dbU = Decimal(lim).quantize(Decimal(".1"), rounding=(ROUND_DOWN if lim > 0 else ROUND_UP))
 
@@ -285,10 +288,24 @@ class Window(QWidget):
         recapUnitsLayout.addWidget(tresholdUnitLabel)
 
         # Connections with labels and set default values at start
-        self.amplisListWidget.itemSelectionChanged.connect(self._updateValues)
-        self.speakersListWidget.itemSelectionChanged.connect(self._updateValues)
-        self.impedanceListWidget.itemSelectionChanged.connect(self._updateValues)
-        self._updateValues()
+        self.amplisListWidget.itemSelectionChanged.connect(self._updateOnSelection)
+        self.speakersListWidget.itemSelectionChanged.connect(self._updateOnSelection)
+        self.impedanceListWidget.itemSelectionChanged.connect(self._updateOnSelection)
+        self._updateOnSelection()
+
+        # Connections with user inputs so we switch to custom when clicked
+        self.impedanceValue.mousePressEvent = self._updateOnInputs
+        self.speakerBaffleValue.mousePressEvent = self._updateOnInputs
+        self.speakerPowerValue.mousePressEvent = self._updateOnInputs
+        self.ampliGainValue.mousePressEvent = self._updateOnInputs
+        self.ampliPowerValue.mousePressEvent = self._updateOnInputs
+
+        # Anytime a value changes we update treshold
+        self.impedanceValue.textChanged.connect(self._updateTreshold)
+        self.speakerBaffleValue.currentTextChanged.connect(self._updateTreshold)
+        self.speakerPowerValue.textChanged.connect(self._updateTreshold)
+        self.ampliGainValue.textChanged.connect(self._updateTreshold)
+        self.ampliPowerValue.textChanged.connect(self._updateTreshold)
 
         # Recap layout
         recapLayoutLeft = QHBoxLayout()
@@ -322,8 +339,8 @@ class Window(QWidget):
                 res = listWidget.sizeHintForColumn(i)
         return res
 
-    def _updateValues(self):
-        """Update value labels and treshold value."""
+    def _updateOnSelection(self) -> None:
+        """Update value labels."""
 
         # Get selected speaker, ampli and impedance
         spk = self.speakersListWidget.currentItem().text()
@@ -336,31 +353,54 @@ class Window(QWidget):
         ampliGain = self.amplis[ampli].gain
         ampliPower = self.amplis[ampli].power.get(impedance)
 
+        # Update value labels, set empty string if not possible
+        self.impedanceValue.setText(f"{impedance}")
+        self.speakerBaffleValue.setCurrentText(f"{speakerBaffle}")
+        self.ampliGainValue.setText(f"{ampliGain}")
+        # Example: F221 cannot be 8 Ohm
+        self.speakerPowerValue.setText(f"{speakerPower if impedance <= self.speakers[spk].impedance else ''}")
+        # Example: MA6.8Q does not support 2 Ohm
+        self.ampliPowerValue.setText(f"{ampliPower if ampliPower else ''}")
+
         # Update selected labels
         self.selectedSpeakerLabel.setText(f"({spk})")
         self.selectedAmpliLabel.setText(f"({ampli})")
 
         # Check if configuration is possible, if not then switch to custom
-        if not ampliPower:  # Example: MA6.8Q does not support 2 Ohm
+        if not self.ampliPowerValue.text():
             self.selectedAmpliLabel.setText(f"(Custom)")
-            self.ampliPowerValue.setText("")
-            self.tresholdValue.setText("")
-            return
-        if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
+        if not self.speakerPowerValue.text():
             self.selectedSpeakerLabel.setText(f"(Custom)")
-            self.speakerPowerValue.setText("")
+
+    def _updateOnInputs(self, event: QMouseEvent) -> None:
+        """Update selected to custom."""
+
+        # Process mouse click first
+        super().mousePressEvent(event)
+
+        self.selectedSpeakerLabel.setText(f"(Custom)")
+        self.selectedAmpliLabel.setText(f"(Custom)")
+
+    def _updateTreshold(self) -> None:
+        """Update treshold result with current parameters."""
+
+        if not (
+            self.impedanceValue.text()
+            and self.speakerBaffleValue.currentText()
+            and self.speakerPowerValue.text()
+            and self.ampliGainValue.text()
+            and self.ampliPowerValue.text()
+        ):
             self.tresholdValue.setText("")
             return
 
-        # Update value labels
-        self.impedanceValue.setText(f"{impedance}")
-        self.speakerBaffleValue.setCurrentText(f"{speakerBaffle}")
-        self.speakerPowerValue.setText(f"{speakerPower}")
-        self.ampliGainValue.setText(f"{ampliGain}")
-        self.ampliPowerValue.setText(f"{ampliPower}")
-
-        # Compute treshold
-        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
+        treshold = limit(
+            int(self.impedanceValue.text()),
+            self.speakerBaffleValue.currentText(),
+            int(self.speakerPowerValue.text()),
+            float(self.ampliGainValue.text()),
+            int(self.ampliPowerValue.text()),
+        )
         self.tresholdValue.setText(f"{treshold}")
 
 
