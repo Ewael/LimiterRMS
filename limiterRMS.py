@@ -104,6 +104,8 @@ class Window(QWidget):
     ampliPowerUnit = "Watt RMS"
     tresholdUnit = "dBu"
 
+    customText = "[Custom]"
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -368,9 +370,9 @@ class Window(QWidget):
 
         # Check if configuration is possible, if not then switch to custom
         if not self.ampliPowerValue.text():
-            self.selectedAmpliLabel.setText(f"(Custom)")
+            self.selectedAmpliLabel.setText(self.customText)
         if not self.speakerPowerValue.text():
-            self.selectedSpeakerLabel.setText(f"(Custom)")
+            self.selectedSpeakerLabel.setText(self.customText)
 
     def _updateOnInputs(self, event: QMouseEvent) -> None:
         """Update selected to custom."""
@@ -378,8 +380,8 @@ class Window(QWidget):
         # Process mouse click first
         super().mousePressEvent(event)
 
-        self.selectedSpeakerLabel.setText(f"(Custom)")
-        self.selectedAmpliLabel.setText(f"(Custom)")
+        self.selectedSpeakerLabel.setText(self.customText)
+        self.selectedAmpliLabel.setText(self.customText)
 
     def _updateTreshold(self) -> None:
         """Update treshold result with current parameters."""
