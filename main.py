@@ -95,6 +95,12 @@ def limit(spk: Speaker, amp: Amplifier, impedance: int, sensitivity: float = 0.7
 class Window(QWidget):
     """Create widgets and their associated connections."""
 
+    impedanceUnit = f"{OHM}"
+    speakerPowerUnit = "Watt AES"
+    ampliGainUnit = "dB"
+    ampliPowerUnit = "Watt RMS"
+    tresholdUnit = "dBu"
+
     def __init__(self) -> None:
         super().__init__()
 
@@ -260,23 +266,23 @@ class Window(QWidget):
         recapInputsLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
         recapInputsLayout.addWidget(self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft)
 
-        # Units
-        impedanceUnit = QLabel(f"{OHM}")
-        speakerBaffleUnit = QLabel()  # No unit for baffle type
-        speakerPowerUnit = QLabel("Watts AES")
-        ampliGainUnit = QLabel("dB")
-        ampliPowerUnit = QLabel("Watts RMS")
-        tresholdUnit = QLabel("dBu")
-        tresholdUnit.setStyleSheet("color: red; font-weight: bold")
+        # Units labels
+        impedanceUnitLabel = QLabel(self.impedanceUnit)
+        speakerBaffleUnitLabel = QLabel()  # No unit for baffle type
+        speakerPowerUnitLabel = QLabel(self.speakerPowerUnit)
+        ampliGainUnitLabel = QLabel(self.ampliGainUnit)
+        ampliPowerUnitLabel = QLabel(self.ampliPowerUnit)
+        tresholdUnitLabel = QLabel(self.tresholdUnit)
+        tresholdUnitLabel.setStyleSheet("color: red; font-weight: bold")
 
         # Units layout
         recapUnitsLayout = QVBoxLayout()
-        recapUnitsLayout.addWidget(impedanceUnit)
-        recapUnitsLayout.addWidget(speakerBaffleUnit)
-        recapUnitsLayout.addWidget(speakerPowerUnit)
-        recapUnitsLayout.addWidget(ampliGainUnit)
-        recapUnitsLayout.addWidget(ampliPowerUnit)
-        recapUnitsLayout.addWidget(tresholdUnit)
+        recapUnitsLayout.addWidget(impedanceUnitLabel)
+        recapUnitsLayout.addWidget(speakerBaffleUnitLabel)
+        recapUnitsLayout.addWidget(speakerPowerUnitLabel)
+        recapUnitsLayout.addWidget(ampliGainUnitLabel)
+        recapUnitsLayout.addWidget(ampliPowerUnitLabel)
+        recapUnitsLayout.addWidget(tresholdUnitLabel)
 
         # Connections with labels and set default values at start
         self.amplisListWidget.itemSelectionChanged.connect(self._updateValues)
@@ -324,27 +330,27 @@ class Window(QWidget):
         ampli = self.amplisListWidget.currentItem().text()
         impedance = int(self.impedanceListWidget.currentItem().text())
 
+        # Get values
+        speakerBaffle = self.speakers[spk].baffle
+        speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
+        ampliGain = self.amplis[ampli].gain
+        ampliPower = self.amplis[ampli].power.get(impedance)
+
         # Update selected labels
         self.selectedSpeakerLabel.setText(f"({spk})")
         self.selectedAmpliLabel.setText(f"({ampli})")
 
         # Check if configuration is possible, if not then switch to custom
-        warning = ""
-        if not self.amplis[ampli].power.get(impedance):  # Example: MA6.8Q does not support 2 Ohm
+        if not ampliPower:  # Example: MA6.8Q does not support 2 Ohm
+            self.selectedAmpliLabel.setText(f"(Custom)")
             self.ampliPowerValue.setText("")
             self.tresholdValue.setText("")
-            powerWarning = f" Warning: {ampli} does not support {impedance} {OHM}"
             return
         if impedance > self.speakers[spk].impedance:  # Example: F221 cannot be 8 Ohm
             self.selectedSpeakerLabel.setText(f"(Custom)")
-            impedanceWarning = f" (Warning: {spk} cannot be {impedance} {OHM})"
-
-        # Get values and compute treshold
-        speakerBaffle = self.speakers[spk].baffle
-        speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
-        ampliGain = self.amplis[ampli].gain
-        ampliPower = self.amplis[ampli].power[impedance]
-        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
+            self.speakerPowerValue.setText("")
+            self.tresholdValue.setText("")
+            return
 
         # Update value labels
         self.impedanceValue.setText(f"{impedance}")
@@ -352,6 +358,9 @@ class Window(QWidget):
         self.speakerPowerValue.setText(f"{speakerPower}")
         self.ampliGainValue.setText(f"{ampliGain}")
         self.ampliPowerValue.setText(f"{ampliPower}")
+
+        # Compute treshold
+        treshold = limit(self.speakers[spk], self.amplis[ampli], impedance)
         self.tresholdValue.setText(f"{treshold}")
 
 
