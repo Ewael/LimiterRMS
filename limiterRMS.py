@@ -26,7 +26,7 @@ OHM = "\u2126"
 APP_NAME = "LimiterRMS"
 AMPLIFIERS = r"amplifiers.json"
 SPEAKERS = r"speakers.json"
-BASE_PATH = str(Path(__file__).parent.resolve()) + "\\config\\"
+BASE_PATH = str(Path(__file__).parent.resolve()) + "\\json\\"
 
 
 def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
@@ -249,14 +249,14 @@ class Window(QWidget):
         intValidator.setRange(0, 50000)
 
         # Values input
-        fixedWidth = 65
+        fixedWidth = 68
         self.impedanceValue = QLineEdit()
         self.impedanceValue.setFixedWidth(fixedWidth)
         self.impedanceValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.impedanceValue.setValidator(intValidator)
         self.speakerBaffleValue = QComboBox()
         self.speakerBaffleValue.setFixedWidth(fixedWidth)
-        self.speakerBaffleValue.addItem("SEALED")
+        self.speakerBaffleValue.addItem("CLOSED")
         self.speakerBaffleValue.addItem("OPEN")
         self.speakerPowerValue = QLineEdit()
         self.speakerPowerValue.setFixedWidth(fixedWidth)
@@ -309,19 +309,12 @@ class Window(QWidget):
         self.impedanceListWidget.itemSelectionChanged.connect(self._updateOnSelection)
         self._updateOnSelection()
 
-        # Connections with user inputs so we switch to custom when clicked
-        self.impedanceValue.mousePressEvent = self._updateOnInputs
-        self.speakerBaffleValue.mousePressEvent = self._updateOnInputs
-        self.speakerPowerValue.mousePressEvent = self._updateOnInputs
-        self.ampliGainValue.mousePressEvent = self._updateOnInputs
-        self.ampliPowerValue.mousePressEvent = self._updateOnInputs
-
         # Anytime a value changes we update treshold
         self.impedanceValue.textChanged.connect(self._updateTreshold)
-        self.speakerBaffleValue.currentTextChanged.connect(self._updateTreshold)
-        self.speakerPowerValue.textChanged.connect(self._updateTreshold)
-        self.ampliGainValue.textChanged.connect(self._updateTreshold)
-        self.ampliPowerValue.textChanged.connect(self._updateTreshold)
+        self.speakerBaffleValue.currentTextChanged.connect(self._updateOnInputsSpeaker)
+        self.speakerPowerValue.textChanged.connect(self._updateOnInputsSpeaker)
+        self.ampliGainValue.textChanged.connect(self._updateOnInputsAmpli)
+        self.ampliPowerValue.textChanged.connect(self._updateOnInputsAmpli)
 
         # Recap layout
         recapLayoutLeft = QHBoxLayout()
@@ -388,14 +381,17 @@ class Window(QWidget):
         if not self.speakerPowerValue.text():
             self.selectedSpeakerLabel.setText(self.customText)
 
-    def _updateOnInputs(self, event: QMouseEvent) -> None:
-        """Update selected to custom."""
-
-        # Process mouse click first
-        super().mousePressEvent(event)
+    def _updateOnInputsSpeaker(self) -> None:
+        """Update selected speaker to custom and update treshold."""
 
         self.selectedSpeakerLabel.setText(self.customText)
+        self._updateTreshold()
+
+    def _updateOnInputsAmpli(self) -> None:
+        """Update selected ampli to custom and update treshold."""
+
         self.selectedAmpliLabel.setText(self.customText)
+        self._updateTreshold()
 
     def _updateTreshold(self) -> None:
         """Update treshold result with current parameters."""

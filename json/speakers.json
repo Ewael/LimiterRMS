@@ -1,17 +1,17 @@
 [
     {
-        "reference": "BPH238",
+        "reference": "BPH-238",
         "impedance": 4,
         "power": 1000,
         "response": "70-750",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Eric Audio LA8C High",
         "impedance": 8,
         "power": 320,
         "response": "2.2k-18k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Eric Audio LA8C Low",
@@ -25,7 +25,7 @@
         "impedance": 8,
         "power": 400,
         "response": "330-2.2k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Eric Audio LA8C Sub",
@@ -39,24 +39,24 @@
         "impedance": 4,
         "power": 2000,
         "response": "20-200",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Orphee CLA 800",
         "impedance": 8,
         "power": 300,
         "response": "55-20k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
-        "reference": "MKH230",
+        "reference": "MKH-230",
         "impedance": 4,
         "power": 900,
         "response": "80-800",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
-        "reference": "MTH 4654 (RCF LF18X401)",
+        "reference": "MTH-4654 (RCF LF18X401)",
         "impedance": 8,
         "power": 1500,
         "response": "30-200",
@@ -67,14 +67,14 @@
         "impedance": 8,
         "power": 150,
         "response": "800-18k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Nexo SI1000 Mid",
         "impedance": 8,
         "power": 350,
         "response": "220-3.5k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Nexo SI1000 Kick",
@@ -88,27 +88,55 @@
         "impedance": 8,
         "power": 700,
         "response": "75-20k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Turbosound TMS3 High",
         "impedance": 8,
         "power": 75,
         "response": "3.7k-17k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Turbosound TMS3 Low",
         "impedance": 4,
         "power": 500,
         "response": "55-250",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
     },
     {
         "reference": "Turbosound TMS3 Mid",
         "impedance": 8,
         "power": 200,
         "response": "250-3.7k",
-        "baffle": "SEALED"
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "MHB-4818 (RCF LF18G401)",
+        "impedance": 8,
+        "power": 900,
+        "response": "32-500",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "T3V (IA3V) High",
+        "impedance": 8,
+        "power": 80,
+        "response": "1.5k-20k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (IA3V) Mid",
+        "impedance": 8,
+        "power": 500,
+        "response": "250-1.5k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (IA3V) Low",
+        "impedance": 8,
+        "power": 700,
+        "response": "75-250",
+        "baffle": "CLOSED"
     }
 ]

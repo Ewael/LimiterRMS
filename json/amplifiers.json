@@ -20,7 +20,7 @@
         "outputs": 2
     },
     {
-        "reference": "TPA FP14000",
+        "reference": "Lab Gruppen FP14000",
         "gain": 35,
         "power": {
             "8": 2350,
@@ -30,12 +30,42 @@
         "outputs": 2
     },
     {
+        "reference": "Lab Gruppen FP10000Q",
+        "gain": 35,
+        "power": {
+            "8": 1300,
+            "4": 2100,
+            "2": 2500
+        },
+        "outputs": 4
+    },
+    {
         "reference": "HPA A5000",
         "gain": 36,
         "power": {
             "8": 1100,
             "4": 1800,
             "2": 2500
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A1800",
+        "gain": 33,
+        "power": {
+            "8": 400,
+            "4": 600,
+            "2": 900
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A3200",
+        "gain": 35,
+        "power": {
+            "8": 700,
+            "4": 1100,
+            "2": 1600
         },
         "outputs": 2
     },
@@ -86,5 +116,15 @@
             "4": 1670
         },
         "outputs": 4
+    },
+    {
+        "reference": "Mac Mah SP1100",
+        "gain": 0,
+        "power": {
+            "8": 700,
+            "4": 1100,
+            "2": 1400
+        },
+        "outputs": 2
     }
 ]

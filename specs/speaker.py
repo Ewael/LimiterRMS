@@ -7,7 +7,7 @@ class Speaker:
             impedance: Speaker impedance, see its documentation
             power: Speaker power in Watt AES
             response: Speaker range of usage in Hz, for instance "330-2.2k"
-            baffle: Baffle type, either "OPEN" or "SEALED"
+            baffle: Baffle type, either "OPEN" or "CLOSED"
         """
 
         self.reference = reference
