@@ -18,8 +18,8 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 
-from specs.amplifier import Amplifier
-from specs.speaker import Speaker
+from src.amplifier import Amplifier
+from src.speaker import Speaker
 
 
 OHM = "\u2126"
