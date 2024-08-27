@@ -56,9 +56,23 @@
         "baffle": "CLOSED"
     },
     {
+        "reference": "B215 (Beyma 15P80Fe)",
+        "impedance": 4,
+        "power": 1600,
+        "response": "30-800",
+        "baffle": "OPEN"
+    },
+    {
         "reference": "MTH-4654 (RCF LF18X401)",
         "impedance": 8,
         "power": 1500,
+        "response": "30-200",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "MTH-4654 (Beyma 21QLEX1600Fe)",
+        "impedance": 8,
+        "power": 1600,
         "response": "30-200",
         "baffle": "OPEN"
     },
@@ -137,6 +151,27 @@
         "impedance": 8,
         "power": 700,
         "response": "75-250",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Martin Audio W8C High",
+        "impedance": 16,
+        "power": 60,
+        "response": "3.5k-18k",
+        "baffle": "CLOSED"
+    },
+{
+        "reference": "Martin Audio W8C Mid",
+        "impedance": 16,
+        "power": 150,
+        "response": "750-3.5k",
+        "baffle": "CLOSED"
+    },
+{
+        "reference": "Martin Audio W8C Low",
+        "impedance": 8,
+        "power": 300,
+        "response": "120-750k",
         "baffle": "CLOSED"
     }
 ]
