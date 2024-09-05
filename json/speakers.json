@@ -155,15 +155,15 @@
     },
     {
         "reference": "Martin Audio W8C High",
-        "impedance": 16,
-        "power": 60,
+        "impedance": 8,
+        "power": 50,
         "response": "3.5k-18k",
         "baffle": "CLOSED"
     },
 {
         "reference": "Martin Audio W8C Mid",
-        "impedance": 16,
-        "power": 150,
+        "impedance": 8,
+        "power": 160,
         "response": "750-3.5k",
         "baffle": "CLOSED"
     },
