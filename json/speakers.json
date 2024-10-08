@@ -175,21 +175,21 @@
         "baffle": "CLOSED"
     },
     {
-        "reference": "T3V (Le Pèlerinage) High",
+        "reference": "T3V (Le Pelerinage) High",
         "impedance": 8,
         "power": 70,
         "response": "1.2k - 18k",
         "baffle": "CLOSED"
     },
     {
-        "reference": "T3V (Le Pèlerinage) Mid",
+        "reference": "T3V (Le Pelerinage) Mid",
         "impedance": 8,
         "power": 200,
         "response": "500-1.2k",
         "baffle": "CLOSED"
     },
     {
-        "reference": "T3V (Le Pèlerinage) Low",
+        "reference": "T3V (Le Pelerinage) Low",
         "impedance": 8,
         "power": 1100,
         "response": "100-500",
