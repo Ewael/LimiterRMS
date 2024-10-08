@@ -1,6 +1,6 @@
 [
     {
-        "reference": "BPH-238",
+        "reference": "Marc.O BPH-238",
         "impedance": 4,
         "power": 1000,
         "response": "70-750",
@@ -49,7 +49,7 @@
         "baffle": "CLOSED"
     },
     {
-        "reference": "MKH-230",
+        "reference": "Marc.O MKH-230",
         "impedance": 4,
         "power": 900,
         "response": "80-800",
@@ -63,14 +63,14 @@
         "baffle": "OPEN"
     },
     {
-        "reference": "MTH-4654 (RCF LF18X401)",
+        "reference": "Marc.O MTH-4654 (RCF LF18X401)",
         "impedance": 8,
         "power": 1500,
         "response": "30-200",
         "baffle": "OPEN"
     },
     {
-        "reference": "MTH-4654 (Beyma 21QLEX1600Fe)",
+        "reference": "Marc.O MTH-4654 (Beyma 21QLEX1600Fe)",
         "impedance": 8,
         "power": 1600,
         "response": "30-200",
@@ -126,7 +126,7 @@
         "baffle": "CLOSED"
     },
     {
-        "reference": "MHB-4818 (RCF LF18G401)",
+        "reference": "Marc.O MHB-4818 (RCF LF18G401)",
         "impedance": 8,
         "power": 900,
         "response": "32-500",
@@ -160,18 +160,39 @@
         "response": "3.5k-18k",
         "baffle": "CLOSED"
     },
-{
+    {
         "reference": "Martin Audio W8C Mid",
         "impedance": 8,
         "power": 160,
         "response": "750-3.5k",
         "baffle": "CLOSED"
     },
-{
+    {
         "reference": "Martin Audio W8C Low",
         "impedance": 8,
         "power": 300,
-        "response": "120-750k",
+        "response": "120-750",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pèlerinage) High",
+        "impedance": 8,
+        "power": 70,
+        "response": "1.2k - 18k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pèlerinage) Mid",
+        "impedance": 8,
+        "power": 200,
+        "response": "500-1.2k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pèlerinage) Low",
+        "impedance": 8,
+        "power": 1100,
+        "response": "100-500",
         "baffle": "CLOSED"
     }
 ]
