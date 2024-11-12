@@ -56,13 +56,6 @@
         "baffle": "CLOSED"
     },
     {
-        "reference": "B215 (Beyma 15P80Fe)",
-        "impedance": 4,
-        "power": 1600,
-        "response": "30-800",
-        "baffle": "OPEN"
-    },
-    {
         "reference": "Marc.O MTH-4654 (RCF LF18X401)",
         "impedance": 8,
         "power": 1500,
@@ -173,6 +166,13 @@
         "power": 300,
         "response": "120-750",
         "baffle": "CLOSED"
+    },
+    {
+        "reference": "Martin Audio B215 MK III (Beyma 15P80Fe)",
+        "impedance": 4,
+        "power": 1600,
+        "response": "30-800",
+        "baffle": "OPEN"
     },
     {
         "reference": "T3V (Le Pelerinage) High",
