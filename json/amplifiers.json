@@ -40,6 +40,15 @@
         "outputs": 4
     },
     {
+        "reference": "Lab Gruppen MA6.8Q",
+        "gain": 35,
+        "power": {
+            "8": 1200,
+            "4": 1700
+        },
+        "outputs": 4
+    },
+    {
         "reference": "HPA A5000",
         "gain": 36,
         "power": {
@@ -80,15 +89,6 @@
         "outputs": 2
     },
     {
-        "reference": "Lab Gruppen MA6.8Q",
-        "gain": 35,
-        "power": {
-            "8": 1200,
-            "4": 1700
-        },
-        "outputs": 4
-    },
-    {
         "reference": "Crown Macro-Tech 1200",
         "gain": 26,
         "power": {
@@ -119,7 +119,7 @@
     },
     {
         "reference": "Admark AD42",
-        "gain": 35,
+        "gain": 41,
         "power": {
             "8": 4200,
             "4": 7800,
@@ -129,7 +129,7 @@
     },
     {
         "reference": "Admark K420",
-        "gain": 35,
+        "gain": 41,
         "power": {
             "8": 2000,
             "4": 3400,
