@@ -145,5 +145,14 @@
             "4": 1000
         },
         "outputs": 2
+    },
+    {
+        "reference": "Powersoft DIGAM 3000",
+        "gain": 35,
+        "power": {
+            "8": 450,
+            "4": 820
+        },
+        "outputs": 2
     }
 ]

@@ -194,5 +194,12 @@
         "power": 1100,
         "response": "100-500",
         "baffle": "CLOSED"
+    },
+    {
+        "reference": "Audiophony A15",
+        "impedance": 8,
+        "power": 350,
+        "response": "ACTIVE",
+        "baffle": "CLOSED"
     }
 ]
