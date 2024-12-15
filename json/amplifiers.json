@@ -79,6 +79,26 @@
         "outputs": 2
     },
     {
+        "reference": "Sanway LA8",
+        "gain": 0,
+        "power": {
+            "8": 1350,
+            "4": 2200,
+            "2": 2700
+        },
+        "outputs": 4
+    },
+{
+        "reference": "MDM 1100x4",
+        "gain": 41.8,
+        "power": {
+            "8": 1100,
+            "4": 1830,
+            "2": 2700
+        },
+        "outputs": 2
+    },
+    {
         "reference": "L-Acoustics LA24",
         "gain": 32,
         "power": {
@@ -108,6 +128,16 @@
         },
         "outputs": 2
     },
+{
+        "reference": "Crown XLS 5000",
+        "gain": 0,
+        "power": {
+            "8": 1100,
+            "4": 1800,
+            "2": 2500
+        },
+        "outputs": 2
+    },
     {
         "reference": "t.amp TSA 4-1300",
         "gain": 37.8,
@@ -116,6 +146,16 @@
             "4": 1670
         },
         "outputs": 4
+    },
+{
+        "reference": "t.amp Proline 3000",
+        "gain": 45,
+        "power": {
+            "8": 1100,
+            "4": 1500,
+            "2": 1800
+        },
+        "outputs": 2
     },
     {
         "reference": "Admark AD42",

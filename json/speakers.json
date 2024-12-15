@@ -1,12 +1,5 @@
 [
     {
-        "reference": "Marc.O BPH-238",
-        "impedance": 4,
-        "power": 1000,
-        "response": "70-750",
-        "baffle": "CLOSED"
-    },
-    {
         "reference": "Eric Audio LA8C High",
         "impedance": 8,
         "power": 320,
@@ -49,11 +42,39 @@
         "baffle": "CLOSED"
     },
     {
+        "reference": "Orphee CLA 1201D",
+        "impedance": 8,
+        "power": 700,
+        "response": "75-20k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Marc.O BPH-238",
+        "impedance": 4,
+        "power": 1000,
+        "response": "70-750",
+        "baffle": "CLOSED"
+    },
+    {
         "reference": "Marc.O MKH-230",
         "impedance": 4,
         "power": 900,
         "response": "80-800",
         "baffle": "CLOSED"
+    },
+    {
+        "reference": "Marc.O MHB-4818 (RCF LF18G401)",
+        "impedance": 8,
+        "power": 900,
+        "response": "32-500",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Marc.O MHB-46 (RCF LF18G401)",
+        "impedance": 8,
+        "power": 900,
+        "response": "40-200",
+        "baffle": "OPEN"
     },
     {
         "reference": "Marc.O MTH-4654 (RCF LF18X401)",
@@ -63,9 +84,23 @@
         "baffle": "OPEN"
     },
     {
+        "reference": "Marc.O MTH-4654 (RCF LF21N451)",
+        "impedance": 8,
+        "power": 1500,
+        "response": "30-200",
+        "baffle": "OPEN"
+    },
+    {
         "reference": "Marc.O MTH-4654 (Beyma 21QLEX1600Fe)",
         "impedance": 8,
         "power": 1600,
+        "response": "30-200",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Sound Agency SACH118-BD (Celestion CF1840JD)",
+        "impedance": 8,
+        "power": 1000,
         "response": "30-200",
         "baffle": "OPEN"
     },
@@ -91,10 +126,10 @@
         "baffle": "OPEN"
     },
     {
-        "reference": "Orphee CLA 1201D",
+        "reference": "Nexo PS15-R2",
         "impedance": 8,
-        "power": 700,
-        "response": "75-20k",
+        "power": 2000,
+        "response": "50-18k",
         "baffle": "CLOSED"
     },
     {
@@ -119,13 +154,6 @@
         "baffle": "CLOSED"
     },
     {
-        "reference": "Marc.O MHB-4818 (RCF LF18G401)",
-        "impedance": 8,
-        "power": 900,
-        "response": "32-500",
-        "baffle": "OPEN"
-    },
-    {
         "reference": "T3V (IA3V) High",
         "impedance": 8,
         "power": 80,
@@ -144,6 +172,27 @@
         "impedance": 8,
         "power": 700,
         "response": "75-250",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pelerinage) High",
+        "impedance": 8,
+        "power": 70,
+        "response": "1.2k - 18k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pelerinage) Mid",
+        "impedance": 8,
+        "power": 200,
+        "response": "500-1.2k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "T3V (Le Pelerinage) Low",
+        "impedance": 8,
+        "power": 1100,
+        "response": "100-500",
         "baffle": "CLOSED"
     },
     {
@@ -173,27 +222,6 @@
         "power": 1600,
         "response": "30-800",
         "baffle": "OPEN"
-    },
-    {
-        "reference": "T3V (Le Pelerinage) High",
-        "impedance": 8,
-        "power": 70,
-        "response": "1.2k - 18k",
-        "baffle": "CLOSED"
-    },
-    {
-        "reference": "T3V (Le Pelerinage) Mid",
-        "impedance": 8,
-        "power": 200,
-        "response": "500-1.2k",
-        "baffle": "CLOSED"
-    },
-    {
-        "reference": "T3V (Le Pelerinage) Low",
-        "impedance": 8,
-        "power": 1100,
-        "response": "100-500",
-        "baffle": "CLOSED"
     },
     {
         "reference": "Audiophony A15",
