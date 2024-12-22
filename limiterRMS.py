@@ -32,7 +32,19 @@ BASE_PATH = str(Path(__file__).parent.resolve()) + "\\json\\"
 def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
     """Return amplifiers specs from given JSON file.
 
-    Only ['power']['8/4/2'] and ['outputs'] are optional and can be equal to None.
+    For instance:
+        {
+            "reference": "Admark K420",
+            "gain": 41,
+            "power": {
+                "8": 2000, [Optional]
+                "4": 3400, [Optional]
+                "2": 4760, [Optional]
+                "8 (bridge)": 6800, [Optional]
+                "4 (bridge)": 9520 [Optional]
+            },
+            "outputs": 4 [Optional]
+        }
     """
 
     with open(path) as f:
@@ -44,9 +56,11 @@ def getAmplisSpecs(path: str) -> dict[str, Amplifier]:
             reference=ampli["reference"],
             gain=ampli["gain"],
             power={
-                8: ampli["power"].get("8"),
-                4: ampli["power"].get("4"),
-                2: ampli["power"].get("2"),
+                "8": ampli["power"].get("8"),
+                "4": ampli["power"].get("4"),
+                "2": ampli["power"].get("2"),
+                "8 (bridge)": ampli["power"].get("8 (bridge)"),
+                "4 (bridge)": ampli["power"].get("4 (bridge)"),
             },
             outputs=ampli.get("outputs"),
         )
@@ -104,7 +118,9 @@ def computeTreshold(
 
     # We take the most strict treshold to protect ampli & speaker
     treshold = min(threshold_spk, threshold_amp)
-    treshold = Decimal(treshold).quantize(Decimal(".1"), rounding=(ROUND_DOWN if treshold > 0 else ROUND_UP))
+    treshold = Decimal(treshold).quantize(
+        Decimal(".1"), rounding=(ROUND_DOWN if treshold > 0 else ROUND_UP)
+    )
 
     return treshold
 
@@ -139,22 +155,27 @@ class Window(QWidget):
             item.setToolTip(
                 f"{ampli.reference}\n\n"
                 + f"gain: {ampli.gain}dB\n"
-                + f"power (8{OHM}): {str(ampli.power[8])+'W' if ampli.power[8] else 'Missing'}\n"
-                + f"power (4{OHM}): {str(ampli.power[4])+'W' if ampli.power[4] else 'Missing'}\n"
-                + f"power (2{OHM}): {str(ampli.power[2])+'W' if ampli.power[2] else 'Missing'}\n"
+                + f"power (8{OHM}): {str(ampli.power["8"])+'W' if ampli.power["8"] else 'Missing'}\n"
+                + f"power (4{OHM}): {str(ampli.power["4"])+'W' if ampli.power["4"] else 'Missing'}\n"
+                + f"power (2{OHM}): {str(ampli.power["2"])+'W' if ampli.power["2"] else 'Missing'}\n"
+                + f"bridge (8{OHM}): {str(ampli.power["8 (bridge)"])+'W' if ampli.power["8 (bridge)"] else 'Missing'}\n"
+                + f"bridge (4{OHM}): {str(ampli.power["4 (bridge)"])+'W' if ampli.power["4 (bridge)"] else 'Missing'}"
                 + f"ouputs number: {ampli.outputs}"
             )
             self.amplisListWidget.addItem(item)
         self.amplisListWidget.setCurrentRow(0)
         self.amplisListWidget.setMinimumWidth(
-            self._computeMinimumWidth(self.amplisListWidget) + self.amplisListWidget.frameWidth() * 10
+            self._computeMinimumWidth(self.amplisListWidget)
+            + self.amplisListWidget.frameWidth() * 10
         )
         self.amplisListWidget.setMinimumHeight(
             self.amplisListWidget.sizeHintForRow(0) * self.amplisListWidget.count()
             + 10 * self.amplisListWidget.frameWidth()
         )
         amplisSelectionLayout = QVBoxLayout()
-        amplisSelectionLayout.addWidget(amplisColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        amplisSelectionLayout.addWidget(
+            amplisColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         amplisSelectionLayout.addWidget(self.amplisListWidget)
 
         # Speakers layout
@@ -173,32 +194,39 @@ class Window(QWidget):
             self.speakersListWidget.addItem(item)
         self.speakersListWidget.setCurrentRow(0)
         self.speakersListWidget.setMinimumWidth(
-            self._computeMinimumWidth(self.speakersListWidget) + self.speakersListWidget.frameWidth() * 10
+            self._computeMinimumWidth(self.speakersListWidget)
+            + self.speakersListWidget.frameWidth() * 10
         )
         self.speakersListWidget.setMinimumHeight(
             self.speakersListWidget.sizeHintForRow(0) * self.speakersListWidget.count()
             + 10 * self.speakersListWidget.frameWidth()
         )
         speakersSelectionLayout = QVBoxLayout()
-        speakersSelectionLayout.addWidget(speakersColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        speakersSelectionLayout.addWidget(
+            speakersColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         speakersSelectionLayout.addWidget(self.speakersListWidget)
 
         # Impedance layout
         impedanceColumnNameLabel = QLabel("Impedance")
         impedanceColumnNameLabel.setStyleSheet("font-weight: bold")
         self.impedanceListWidget = QListWidget()
-        for impedance in [2, 4, 8]:
-            self.impedanceListWidget.addItem(QListWidgetItem(self.tr(str(impedance))))
+        for impedance in ["8", "4", "2", "8 (bridge)", "4 (bridge)"]:
+            self.impedanceListWidget.addItem(QListWidgetItem(self.tr(impedance)))
         self.impedanceListWidget.setCurrentRow(0)
         self.impedanceListWidget.setMinimumWidth(
-            self._computeMinimumWidth(self.impedanceListWidget) + self.impedanceListWidget.frameWidth() * 10
+            self._computeMinimumWidth(self.impedanceListWidget)
+            + self.impedanceListWidget.frameWidth() * 10
         )
         self.impedanceListWidget.setMinimumHeight(
-            self.impedanceListWidget.sizeHintForRow(0) * self.impedanceListWidget.count()
+            self.impedanceListWidget.sizeHintForRow(0)
+            * self.impedanceListWidget.count()
             + 10 * self.impedanceListWidget.frameWidth()
         )
         impedanceSelectionLayout = QVBoxLayout()
-        impedanceSelectionLayout.addWidget(impedanceColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        impedanceSelectionLayout.addWidget(
+            impedanceColumnNameLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         impedanceSelectionLayout.addWidget(self.impedanceListWidget)
 
         # Selection layout
@@ -216,10 +244,18 @@ class Window(QWidget):
         # Selected layout
         recapSelectedLayout = QVBoxLayout()
         recapSelectedLayout.addWidget(QLabel())  # Empty for impedance row
-        recapSelectedLayout.addWidget(speakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        recapSelectedLayout.addWidget(self.selectedSpeakerLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        recapSelectedLayout.addWidget(ampliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        recapSelectedLayout.addWidget(self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        recapSelectedLayout.addWidget(
+            speakerLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        recapSelectedLayout.addWidget(
+            self.selectedSpeakerLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        recapSelectedLayout.addWidget(
+            ampliLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        recapSelectedLayout.addWidget(
+            self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter
+        )
         recapSelectedLayout.addWidget(QLabel())  # Empty for treshold row
 
         # Recap labels
@@ -233,12 +269,24 @@ class Window(QWidget):
 
         # Recap labels layout
         recapLabelsLayout = QVBoxLayout()
-        recapLabelsLayout.addWidget(impedanceLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addWidget(speakerBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addWidget(speakerPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addWidget(ampliGainLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addWidget(ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight)
-        recapLabelsLayout.addWidget(tresholdLabel, alignment=Qt.AlignmentFlag.AlignRight)
+        recapLabelsLayout.addWidget(
+            impedanceLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        recapLabelsLayout.addWidget(
+            speakerBaffleLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        recapLabelsLayout.addWidget(
+            speakerPowerLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        recapLabelsLayout.addWidget(
+            ampliGainLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        recapLabelsLayout.addWidget(
+            ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        recapLabelsLayout.addWidget(
+            tresholdLabel, alignment=Qt.AlignmentFlag.AlignRight
+        )
 
         # Validators for user input
         floatValidator = QDoubleValidator()
@@ -274,16 +322,30 @@ class Window(QWidget):
         self.tresholdValue.setFixedWidth(fixedWidth)
         self.tresholdValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.tresholdValue.setReadOnly(True)  # Treshold is read-only
-        self.tresholdValue.setStyleSheet("background-color: #FFCCCC; color: red; font-weight: bold")
+        self.tresholdValue.setStyleSheet(
+            "background-color: #FFCCCC; color: red; font-weight: bold"
+        )
 
         # Layout for inputs
         recapInputsLayout = QVBoxLayout()
-        recapInputsLayout.addWidget(self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapInputsLayout.addWidget(self.speakerBaffleValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapInputsLayout.addWidget(self.speakerPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapInputsLayout.addWidget(self.ampliGainValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapInputsLayout.addWidget(self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft)
-        recapInputsLayout.addWidget(self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft)
+        recapInputsLayout.addWidget(
+            self.impedanceValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        recapInputsLayout.addWidget(
+            self.speakerBaffleValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        recapInputsLayout.addWidget(
+            self.speakerPowerValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        recapInputsLayout.addWidget(
+            self.ampliGainValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        recapInputsLayout.addWidget(
+            self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
+        recapInputsLayout.addWidget(
+            self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft
+        )
 
         # Units labels
         impedanceUnitLabel = QLabel(self.impedanceUnit)
@@ -354,20 +416,25 @@ class Window(QWidget):
         # Get selected speaker, ampli and impedance
         spk = self.speakersListWidget.currentItem().text()
         ampli = self.amplisListWidget.currentItem().text()
-        impedance = int(self.impedanceListWidget.currentItem().text())
+        impedanceMode = self.impedanceListWidget.currentItem().text()
+        impedanceInt = int(self.impedanceListWidget.currentItem().text().replace(" (bridge)", ""))
 
         # Get values
         speakerBaffle = self.speakers[spk].baffle
-        speakerPower = int(self.speakers[spk].power * (self.speakers[spk].impedance / impedance))
+        speakerPower = int(
+            self.speakers[spk].power * (self.speakers[spk].impedance / impedanceInt)
+        )
         ampliGain = self.amplis[ampli].gain
-        ampliPower = self.amplis[ampli].power.get(impedance)
+        ampliPower = self.amplis[ampli].power.get(impedanceMode)
 
         # Update value labels, set empty string if not possible
-        self.impedanceValue.setText(f"{impedance}")
+        self.impedanceValue.setText(f"{impedanceInt}")
         self.speakerBaffleValue.setCurrentText(f"{speakerBaffle}")
         self.ampliGainValue.setText(f"{ampliGain}")
         # Example: F221 cannot be 8 Ohm
-        self.speakerPowerValue.setText(f"{speakerPower if impedance <= self.speakers[spk].impedance else ''}")
+        self.speakerPowerValue.setText(
+            f"{speakerPower if impedanceInt <= self.speakers[spk].impedance else ''}"
+        )
         # Example: MA6.8Q does not support 2 Ohm
         self.ampliPowerValue.setText(f"{ampliPower if ampliPower else ''}")
 

@@ -1,5 +1,29 @@
 [
     {
+        "reference": "Admark AD42",
+        "gain": 41,
+        "power": {
+            "8": 4200,
+            "4": 7800,
+            "2": 8500,
+            "8 (bridge)": 15600,
+            "4 (bridge)": 17000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Admark K420",
+        "gain": 41,
+        "power": {
+            "8": 2000,
+            "4": 3400,
+            "2": 4760,
+            "8 (bridge)": 6800,
+            "4 (bridge)": 9520
+        },
+        "outputs": 4
+    },
+    {
         "reference": "Crest Audio 7001",
         "gain": 40,
         "power": {
@@ -16,6 +40,80 @@
             "8": 1100,
             "4": 2050,
             "2": 3000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Crown Macro-Tech 1200",
+        "gain": 26,
+        "power": {
+            "8": 310,
+            "4": 480,
+            "2": 675,
+            "8 (bridge)": 970,
+            "4 (bridge)": 1300
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Crown Micro-Tech 1200",
+        "gain": 26,
+        "power": {
+            "8": 295,
+            "4": 450,
+            "2": 585
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Crown XLS 5000",
+        "gain": 0,
+        "power": {
+            "8": 1100,
+            "4": 1800,
+            "2": 2500,
+            "8 (bridge)": 3600,
+            "4 (bridge)": 5000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "ElectroVoice P3000",
+        "gain": 26,
+        "power": {
+            "8": 750,
+            "4": 1200,
+            "8 (bridge)": 2400
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A5000",
+        "gain": 36,
+        "power": {
+            "8": 1100,
+            "4": 1800,
+            "2": 2500
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A1800",
+        "gain": 33,
+        "power": {
+            "8": 400,
+            "4": 600,
+            "2": 900
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "HPA A3200",
+        "gain": 35,
+        "power": {
+            "8": 700,
+            "4": 1100,
+            "2": 1600
         },
         "outputs": 2
     },
@@ -49,56 +147,6 @@
         "outputs": 4
     },
     {
-        "reference": "HPA A5000",
-        "gain": 36,
-        "power": {
-            "8": 1100,
-            "4": 1800,
-            "2": 2500
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "HPA A1800",
-        "gain": 33,
-        "power": {
-            "8": 400,
-            "4": 600,
-            "2": 900
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "HPA A3200",
-        "gain": 35,
-        "power": {
-            "8": 700,
-            "4": 1100,
-            "2": 1600
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "Sanway LA8",
-        "gain": 0,
-        "power": {
-            "8": 1350,
-            "4": 2200,
-            "2": 2700
-        },
-        "outputs": 4
-    },
-{
-        "reference": "MDM 1100x4",
-        "gain": 41.8,
-        "power": {
-            "8": 1100,
-            "4": 1830,
-            "2": 2700
-        },
-        "outputs": 2
-    },
-    {
         "reference": "L-Acoustics LA24",
         "gain": 32,
         "power": {
@@ -109,80 +157,24 @@
         "outputs": 2
     },
     {
-        "reference": "Crown Macro-Tech 1200",
-        "gain": 26,
-        "power": {
-            "8": 310,
-            "4": 480,
-            "2": 675
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "Crown Micro-Tech 1200",
-        "gain": 26,
-        "power": {
-            "8": 295,
-            "4": 450,
-            "2": 585
-        },
-        "outputs": 2
-    },
-{
-        "reference": "Crown XLS 5000",
-        "gain": 0,
-        "power": {
-            "8": 1100,
-            "4": 1800,
-            "2": 2500
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "t.amp TSA 4-1300",
-        "gain": 37.8,
-        "power": {
-            "8": 1220,
-            "4": 1670
-        },
-        "outputs": 4
-    },
-{
-        "reference": "t.amp Proline 3000",
-        "gain": 45,
-        "power": {
-            "8": 1100,
-            "4": 1500,
-            "2": 1800
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "Admark AD42",
-        "gain": 41,
-        "power": {
-            "8": 4200,
-            "4": 7800,
-            "2": 8500
-        },
-        "outputs": 2
-    },
-    {
-        "reference": "Admark K420",
-        "gain": 41,
-        "power": {
-            "8": 2000,
-            "4": 3400,
-            "2": 4760
-        },
-        "outputs": 4
-    },
-    {
         "reference": "Martin Audio MA2.0",
         "gain": 32,
         "power": {
             "8": 600,
-            "4": 1000
+            "4": 1000,
+            "8 (bridge)": 2000
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "MDM 1100x4",
+        "gain": 41.8,
+        "power": {
+            "8": 1100,
+            "4": 1830,
+            "2": 2700,
+            "8 (bridge)": 3660,
+            "4 (bridge)": 5000
         },
         "outputs": 2
     },
@@ -191,7 +183,42 @@
         "gain": 35,
         "power": {
             "8": 450,
-            "4": 820
+            "4": 820,
+            "2": 1250
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "Sanway LA8",
+        "gain": 0,
+        "power": {
+            "8": 1350,
+            "4": 2200,
+            "2": 2700,
+            "8 (bridge)": 4400,
+            "4 (bridge)": 5000
+        },
+        "outputs": 4
+    },
+    {
+        "reference": "t.amp TSA 4-1300",
+        "gain": 37.8,
+        "power": {
+            "8": 1220,
+            "4": 1670,
+            "8 (bridge)": 4000
+        },
+        "outputs": 4
+    },
+    {
+        "reference": "t.amp Proline 3000",
+        "gain": 45,
+        "power": {
+            "8": 1100,
+            "4": 1500,
+            "2": 1800,
+            "8 (bridge)": 3150,
+            "4 (bridge)": 3550
         },
         "outputs": 2
     }

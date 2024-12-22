@@ -13,6 +13,8 @@ class Amplifier:
                     8: 8 Ohm power
                     4: 4 Ohm power
                     2: 2 Ohm power
+                    8 (bridge): 8 Ohm bridged power
+                    4 (bridge): 4 Ohm bridged power
                 }
             outputs: Number of outputs
         """
