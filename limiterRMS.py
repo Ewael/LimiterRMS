@@ -140,7 +140,7 @@ class Window(QWidget):
         super().__init__()
 
         self.setWindowTitle(APP_NAME)
-        self.setGeometry(150, 150, 800, 500)
+        self.setGeometry(400, 50, 800, 500)
 
         # Get amplis and speakers data
         self.amplis = getAmplisSpecs(BASE_PATH + AMPLIFIERS)
@@ -159,7 +159,7 @@ class Window(QWidget):
                 + f"power (4{OHM}): {str(ampli.power["4"])+'W' if ampli.power["4"] else 'Missing'}\n"
                 + f"power (2{OHM}): {str(ampli.power["2"])+'W' if ampli.power["2"] else 'Missing'}\n"
                 + f"bridge (8{OHM}): {str(ampli.power["8 (bridge)"])+'W' if ampli.power["8 (bridge)"] else 'Missing'}\n"
-                + f"bridge (4{OHM}): {str(ampli.power["4 (bridge)"])+'W' if ampli.power["4 (bridge)"] else 'Missing'}"
+                + f"bridge (4{OHM}): {str(ampli.power["4 (bridge)"])+'W' if ampli.power["4 (bridge)"] else 'Missing'}\n"
                 + f"ouputs number: {ampli.outputs}"
             )
             self.amplisListWidget.addItem(item)
