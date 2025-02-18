@@ -77,6 +77,20 @@
         "baffle": "OPEN"
     },
     {
+        "reference": "Marc.O MS-18 MKIII (RCF LF18G401)",
+        "impedance": 8,
+        "power": 900,
+        "response": "32-100",
+        "baffle": "OPEN"
+    },
+    {
+        "reference": "Marc.O MS-46 (RCF LF18G401)",
+        "impedance": 8,
+        "power": 900,
+        "response": "32-100",
+        "baffle": "OPEN"
+    },
+    {
         "reference": "Marc.O MTH-4654 (RCF LF18X401)",
         "impedance": 8,
         "power": 1500,
@@ -152,6 +166,34 @@
         "power": 200,
         "response": "250-3.7k",
         "baffle": "CLOSED"
+    },
+    {
+        "reference": "Turbosound TA-890H High",
+        "impedance": 12,
+        "power": 100,
+        "response": "5k99-20k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Turbosound TA-890H Mid",
+        "impedance": 16,
+        "power": 200,
+        "response": "405-4k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Turbosound TA-890H Low",
+        "impedance": 8,
+        "power": 500,
+        "response": "101-405",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Turbosound TA-890L",
+        "impedance": 8,
+        "power": 1100,
+        "response": "30-101",
+        "baffle": "OPEN"
     },
     {
         "reference": "T3V (IA3V) High",

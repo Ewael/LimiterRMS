@@ -78,6 +78,16 @@
         "outputs": 2
     },
     {
+        "reference": "CVR D2004",
+        "gain": 32,
+        "power": {
+            "8": 2000,
+            "4": 3400,
+            "2": 4760
+        },
+        "outputs": 2
+    },
+    {
         "reference": "ElectroVoice P3000",
         "gain": 26,
         "power": {
@@ -165,6 +175,18 @@
             "8 (bridge)": 2000
         },
         "outputs": 2
+    },
+    {
+        "reference": "MC2 E100",
+        "gain": 32,
+        "power": {
+            "8": 1400,
+            "4": 2800,
+            "2": 3700,
+            "8 (bridge)": 5300,
+            "4 (bridge)": 7400
+        },
+        "outputs": 4
     },
     {
         "reference": "MDM 1100x4",

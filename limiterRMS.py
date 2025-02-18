@@ -140,7 +140,7 @@ class Window(QWidget):
         super().__init__()
 
         self.setWindowTitle(APP_NAME)
-        self.setGeometry(400, 50, 800, 500)
+        self.setGeometry(400, 50, 800, 600)
 
         # Get amplis and speakers data
         self.amplis = getAmplisSpecs(BASE_PATH + AMPLIFIERS)
@@ -169,7 +169,7 @@ class Window(QWidget):
             + self.amplisListWidget.frameWidth() * 10
         )
         self.amplisListWidget.setMinimumHeight(
-            self.amplisListWidget.sizeHintForRow(0) * self.amplisListWidget.count()
+            self.amplisListWidget.sizeHintForRow(0) * 10
             + 10 * self.amplisListWidget.frameWidth()
         )
         amplisSelectionLayout = QVBoxLayout()
@@ -198,7 +198,7 @@ class Window(QWidget):
             + self.speakersListWidget.frameWidth() * 10
         )
         self.speakersListWidget.setMinimumHeight(
-            self.speakersListWidget.sizeHintForRow(0) * self.speakersListWidget.count()
+            self.speakersListWidget.sizeHintForRow(0) * 10
             + 10 * self.speakersListWidget.frameWidth()
         )
         speakersSelectionLayout = QVBoxLayout()
@@ -219,8 +219,7 @@ class Window(QWidget):
             + self.impedanceListWidget.frameWidth() * 10
         )
         self.impedanceListWidget.setMinimumHeight(
-            self.impedanceListWidget.sizeHintForRow(0)
-            * self.impedanceListWidget.count()
+            self.impedanceListWidget.sizeHintForRow(0) * 10
             + 10 * self.impedanceListWidget.frameWidth()
         )
         impedanceSelectionLayout = QVBoxLayout()
@@ -417,7 +416,9 @@ class Window(QWidget):
         spk = self.speakersListWidget.currentItem().text()
         ampli = self.amplisListWidget.currentItem().text()
         impedanceMode = self.impedanceListWidget.currentItem().text()
-        impedanceInt = int(self.impedanceListWidget.currentItem().text().replace(" (bridge)", ""))
+        impedanceInt = int(
+            self.impedanceListWidget.currentItem().text().replace(" (bridge)", "")
+        )
 
         # Get values
         speakerBaffle = self.speakers[spk].baffle
