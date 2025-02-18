@@ -96,7 +96,24 @@ def computeTreshold(
     ampliPower: int,
     sensitivity: float = 0.775,
 ) -> Decimal:
-    """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity."""
+    """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity.
+
+    Dans un ampli,
+
+        P = U ^ 2 / R
+    <=> U = sqrt( P * R)
+
+        U_out = U_in * 10 ^ ( gain_dB / 20 )
+    <=> U_in = U_out / 10 ^ ( gain_dB / 20 )
+
+    Or,
+
+        dBu = 20 * log10( U / 0.775 )
+
+    Donc, on a
+
+        dBu_in = 20 * log10( U_out / 0.775 ) - gain_dB
+    """
 
     # El famoso "smart limiter" from Hornplans
     baffleFactor = 1.5625 if speakerBaffle == "OPEN" else 2.34375

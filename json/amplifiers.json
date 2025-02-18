@@ -78,12 +78,14 @@
         "outputs": 2
     },
     {
-        "reference": "CVR D2004",
+        "reference": "CVR D-2004",
         "gain": 32,
         "power": {
             "8": 2000,
             "4": 3400,
-            "2": 4760
+            "2": 4760,
+            "8 (bridge)": 6800,
+            "4 (bridge)": 9520
         },
         "outputs": 2
     },
