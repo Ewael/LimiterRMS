@@ -18,9 +18,9 @@ from math import log10, sqrt, pow
         dBu_in = 20 * log10( U_out / 0.775 ) - gain_dB
 """
 
-P_HP = 1600
+P_HP = 1000
 P_amp = 4200
-gain_amp = 41
+gain_amp = 44
 impedance = 8
 
 U_HP_max = sqrt(P_HP * impedance) # 113.14 V = tension max admissible par le HP
