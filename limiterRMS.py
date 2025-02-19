@@ -133,13 +133,13 @@ def computeTreshold(
     # Gain substraction
     threshold_amp = dBu_amp - ampliGain
 
-    # We take the most strict treshold to protect ampli & speaker
-    treshold = min(threshold_spk, threshold_amp)
-    treshold = Decimal(treshold).quantize(
-        Decimal(".1"), rounding=(ROUND_DOWN if treshold > 0 else ROUND_UP)
+    # We take the most strict threshold to protect ampli & speaker
+    threshold = min(threshold_spk, threshold_amp)
+    threshold = Decimal(threshold).quantize(
+        Decimal(".1"), rounding=(ROUND_DOWN if threshold > 0 else ROUND_UP)
     )
 
-    return treshold
+    return threshold
 
 
 class Window(QWidget):
