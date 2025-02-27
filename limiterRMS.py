@@ -101,7 +101,7 @@ def computeTreshold(
     Dans un ampli,
 
         P = U ^ 2 / R
-    <=> U = sqrt( P * R)
+    <=> U = sqrt( P * R )
 
         U_out = U_in * 10 ^ ( gain_dB / 20 )
     <=> U_in = U_out / 10 ^ ( gain_dB / 20 )
