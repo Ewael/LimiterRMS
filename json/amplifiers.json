@@ -24,6 +24,15 @@
         "outputs": 4
     },
     {
+        "reference": "Behringer NX6000",
+        "gain": 31,
+        "power": {
+            "8": 1600,
+            "4": 3000
+        },
+        "outputs": 2
+    },
+    {
         "reference": "Crest Audio 7001",
         "gain": 40,
         "power": {

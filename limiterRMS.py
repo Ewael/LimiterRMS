@@ -157,7 +157,7 @@ class Window(QWidget):
         super().__init__()
 
         self.setWindowTitle(APP_NAME)
-        self.setGeometry(400, 50, 800, 600)
+        self.setGeometry(400, 50, 900, 700)
 
         # Get amplis and speakers data
         self.amplis = getAmplisSpecs(BASE_PATH + AMPLIFIERS)
