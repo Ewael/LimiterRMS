@@ -2,8 +2,9 @@ import os
 
 
 # Path to directory we will browse recursively to find all .wav
-dir_path = r"D:\Media\Musique\Rekordbox\Tracks"
-
+dir_path1 = r"D:\Media\Musique\Rekordbox\Tracks"
+dir_path2 = r"C:\Users\Ewael\Music\PioneerDJ\Imported from Device\Contents"
+dir_path3 = r"C:\Users\Ewael\Documents\Son\Thomasson\Calage"
 
 def get_wav(dir_path: str) -> list[str]:
     """Return list with .wav files pathes."""
@@ -42,8 +43,8 @@ def fix_unspported(unsupported_tracks: list[str]) -> None:
             print(f"Fixed: {track}")
 
 
-wav = get_wav(dir_path)
+wav = get_wav(dir_path1) + get_wav(dir_path2) + get_wav(dir_path3)
 print(f"Found {len(wav)} WAV files")
 uns = get_unsupported(wav)
 print(f"Found {len(uns)} unsupported WAV files")
-# fix_unspported(uns)
+fix_unspported(uns)
