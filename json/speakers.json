@@ -1,4 +1,5 @@
 [
+
     {
         "reference": "Eric Audio LA8C High",
         "impedance": 8,
@@ -144,6 +145,27 @@
         "impedance": 8,
         "power": 2000,
         "response": "50-18k",
+        "baffle": "CLOSED"
+    },
+    {
+        "reference": "Rave'N Blast Compound 118 (RCF LF18X401)",
+        "impedance": 8,
+        "power": 1500,
+        "response": "32-80",
+        "baffle": "OPEN"
+    },
+{
+        "reference": "Rave'N Blast T3V Low (RCF MB15N405)",
+        "impedance": 8,
+        "power": 1100,
+        "response": "80-500",
+        "baffle": "CLOSED"
+    },
+{
+        "reference": "Rave'N Blast T3V Mid/High (BMS 4590)",
+        "impedance": 8,
+        "power": 150,
+        "response": "500-20k",
         "baffle": "CLOSED"
     },
     {
