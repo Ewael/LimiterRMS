@@ -506,7 +506,7 @@ class Window(QWidget):
 
 def run() -> None:
     app = QApplication()
-    app.setStyleSheet(qdarktheme.load_stylesheet()) 
+    app.setStyleSheet(qdarktheme.load_stylesheet())
     window = Window()
     sys.exit(app.exec())
 
