@@ -18,6 +18,9 @@ from PySide6.QtWidgets import (
     QComboBox,
 )
 
+# Dark theme for Qt
+import qdarktheme
+
 from src.amplifier import Amplifier
 from src.speaker import Speaker
 
@@ -457,8 +460,8 @@ class Window(QWidget):
         self.ampliPowerValue.setText(f"{ampliPower if ampliPower else ''}")
 
         # Update selected labels
-        self.selectedSpeakerLabel.setText(f"({spk})")
-        self.selectedAmpliLabel.setText(f"({ampli})")
+        self.selectedSpeakerLabel.setText(f"[{spk}]")
+        self.selectedAmpliLabel.setText(f"[{ampli}]")
 
         # Check if configuration is possible, if not then switch to custom
         if not self.ampliPowerValue.text():
@@ -503,6 +506,7 @@ class Window(QWidget):
 
 def run() -> None:
     app = QApplication()
+    app.setStyleSheet(qdarktheme.load_stylesheet()) 
     window = Window()
     sys.exit(app.exec())
 
