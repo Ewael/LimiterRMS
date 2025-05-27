@@ -1,8 +1,6 @@
 import sys
 import json
 
-from decimal import Decimal, ROUND_DOWN, ROUND_UP
-from math import log10, sqrt
 from pathlib import Path
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDoubleValidator, QIntValidator, QMouseEvent
@@ -22,6 +20,7 @@ from PySide6.QtWidgets import (
 import qdarktheme
 
 from src.amplifier import Amplifier
+from src.limiter import Limiter
 from src.speaker import Speaker
 
 
@@ -89,60 +88,6 @@ def getSpeakersSpecs(path: str) -> dict[str, Speaker]:
             baffle=spk["baffle"],
         )
     return speakers
-
-
-def computeTreshold(
-    impedance: int,
-    speakerBaffle: str,
-    speakerPower: int,
-    ampliGain: float,
-    ampliPower: int,
-    sensitivity: float = 0.775,
-) -> Decimal:
-    """Compute threshold for given speaker, amplifier and impedance for 0.775V sensitivity.
-
-    Dans un ampli,
-
-        P = U ^ 2 / R
-    <=> U = sqrt( P * R )
-
-        U_out = U_in * 10 ^ ( gain_dB / 20 )
-    <=> U_in = U_out / 10 ^ ( gain_dB / 20 )
-
-    Or,
-
-        dBu = 20 * log10( U / 0.775 )
-
-    Donc, on a
-
-        dBu_in = 20 * log10( U_out / 0.775 ) - gain_dB
-    """
-
-    # El famoso "smart limiter" from Hornplans
-    baffleFactor = 1.5625 if speakerBaffle == "OPEN" else 2.34375
-    # RMS voltage corresponding to given speaker power at given impedance
-    V_spk = sqrt((speakerPower / baffleFactor) * impedance)
-    # We convert this RMS voltage to dBu at 0.775V sensitivity
-    dBu_spk = 20 * log10(V_spk / sensitivity)
-    # Then we remove gain of the amplifier
-    threshold_spk = dBu_spk - ampliGain
-
-    # We do the same with amplifier power, factor is from Hornplans again
-    ampliFactor = 2
-    # RMS voltage corresponding to given amplifier power at given impedance
-    V_amp = sqrt((ampliPower / ampliFactor) * impedance)
-    # RMS to dBu conversion
-    dBu_amp = 20 * log10(V_amp / sensitivity)
-    # Gain substraction
-    threshold_amp = dBu_amp - ampliGain
-
-    # We take the most strict threshold to protect ampli & speaker
-    threshold = min(threshold_spk, threshold_amp)
-    threshold = Decimal(threshold).quantize(
-        Decimal(".1"), rounding=(ROUND_DOWN if threshold > 0 else ROUND_UP)
-    )
-
-    return threshold
 
 
 class Window(QWidget):
@@ -494,13 +439,13 @@ class Window(QWidget):
             self.tresholdValue.setText("")
             return
 
-        treshold = computeTreshold(
+        treshold = Limiter(
             int(self.impedanceValue.text()),
             self.speakerBaffleValue.currentText(),
             int(self.speakerPowerValue.text()),
             float(self.ampliGainValue.text()),
             int(self.ampliPowerValue.text()),
-        )
+        ).computeTreshold()
         self.tresholdValue.setText(f"{treshold}")
 
 
