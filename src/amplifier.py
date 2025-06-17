@@ -1,5 +1,11 @@
 class Amplifier:
-    def __init__(self, reference: str, gain: float, power: dict[int, int | None], outputs: int | None) -> None:
+    def __init__(
+        self,
+        reference: str,
+        gain: float,
+        power: dict[int, int | None],
+        outputs: int | None,
+    ) -> None:
         """Init all attributes.
 
         If one value is None then it means info is missing.

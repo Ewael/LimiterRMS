@@ -97,7 +97,7 @@ class Window(QWidget):
     speakerPowerUnit = "Watt AES"
     ampliGainUnit = "dB"
     ampliPowerUnit = "Watt RMS"
-    tresholdUnit = "dBu"
+    thresholdUnit = "dBu"
 
     customText = "[Custom]"
 
@@ -220,7 +220,7 @@ class Window(QWidget):
         recapSelectedLayout.addWidget(
             self.selectedAmpliLabel, alignment=Qt.AlignmentFlag.AlignCenter
         )
-        recapSelectedLayout.addWidget(QLabel())  # Empty for treshold row
+        recapSelectedLayout.addWidget(QLabel())  # Empty for threshold row
 
         # Recap labels
         impedanceLabel = QLabel("Impedance:")
@@ -228,8 +228,8 @@ class Window(QWidget):
         speakerPowerLabel = QLabel("Power:")
         ampliGainLabel = QLabel("Gain:")
         ampliPowerLabel = QLabel("Power:")
-        tresholdLabel = QLabel("Treshold:")
-        tresholdLabel.setStyleSheet("color: red; font-weight: bold")
+        thresholdLabel = QLabel("Threshold:")
+        thresholdLabel.setStyleSheet("color: red; font-weight: bold")
 
         # Recap labels layout
         recapLabelsLayout = QVBoxLayout()
@@ -249,7 +249,7 @@ class Window(QWidget):
             ampliPowerLabel, alignment=Qt.AlignmentFlag.AlignRight
         )
         recapLabelsLayout.addWidget(
-            tresholdLabel, alignment=Qt.AlignmentFlag.AlignRight
+            thresholdLabel, alignment=Qt.AlignmentFlag.AlignRight
         )
 
         # Validators for user input
@@ -282,11 +282,11 @@ class Window(QWidget):
         self.ampliPowerValue.setFixedWidth(fixedWidth)
         self.ampliPowerValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.ampliPowerValue.setValidator(intValidator)
-        self.tresholdValue = QLineEdit()
-        self.tresholdValue.setFixedWidth(fixedWidth)
-        self.tresholdValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.tresholdValue.setReadOnly(True)  # Treshold is read-only
-        self.tresholdValue.setStyleSheet(
+        self.thresholdValue = QLineEdit()
+        self.thresholdValue.setFixedWidth(fixedWidth)
+        self.thresholdValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.thresholdValue.setReadOnly(True)  # threshold is read-only
+        self.thresholdValue.setStyleSheet(
             "background-color: #FFCCCC; color: red; font-weight: bold"
         )
 
@@ -308,7 +308,7 @@ class Window(QWidget):
             self.ampliPowerValue, alignment=Qt.AlignmentFlag.AlignLeft
         )
         recapInputsLayout.addWidget(
-            self.tresholdValue, alignment=Qt.AlignmentFlag.AlignLeft
+            self.thresholdValue, alignment=Qt.AlignmentFlag.AlignLeft
         )
 
         # Units labels
@@ -317,8 +317,8 @@ class Window(QWidget):
         speakerPowerUnitLabel = QLabel(self.speakerPowerUnit)
         ampliGainUnitLabel = QLabel(self.ampliGainUnit)
         ampliPowerUnitLabel = QLabel(self.ampliPowerUnit)
-        tresholdUnitLabel = QLabel(self.tresholdUnit)
-        tresholdUnitLabel.setStyleSheet("color: red; font-weight: bold")
+        thresholdUnitLabel = QLabel(self.thresholdUnit)
+        thresholdUnitLabel.setStyleSheet("color: red; font-weight: bold")
 
         # Units layout
         recapUnitsLayout = QVBoxLayout()
@@ -327,7 +327,7 @@ class Window(QWidget):
         recapUnitsLayout.addWidget(speakerPowerUnitLabel)
         recapUnitsLayout.addWidget(ampliGainUnitLabel)
         recapUnitsLayout.addWidget(ampliPowerUnitLabel)
-        recapUnitsLayout.addWidget(tresholdUnitLabel)
+        recapUnitsLayout.addWidget(thresholdUnitLabel)
 
         # Connections with labels and set default values at start
         self.amplisListWidget.itemSelectionChanged.connect(self._updateOnSelection)
@@ -335,8 +335,8 @@ class Window(QWidget):
         self.impedanceListWidget.itemSelectionChanged.connect(self._updateOnSelection)
         self._updateOnSelection()
 
-        # Anytime a value changes we update treshold
-        self.impedanceValue.textChanged.connect(self._updateTreshold)
+        # Anytime a value changes we update threshold
+        self.impedanceValue.textChanged.connect(self._updatethreshold)
         self.speakerBaffleValue.currentTextChanged.connect(self._updateOnInputsSpeaker)
         self.speakerPowerValue.textChanged.connect(self._updateOnInputsSpeaker)
         self.ampliGainValue.textChanged.connect(self._updateOnInputsAmpli)
@@ -415,19 +415,19 @@ class Window(QWidget):
             self.selectedSpeakerLabel.setText(self.customText)
 
     def _updateOnInputsSpeaker(self) -> None:
-        """Update selected speaker to custom and update treshold."""
+        """Update selected speaker to custom and update threshold."""
 
         self.selectedSpeakerLabel.setText(self.customText)
-        self._updateTreshold()
+        self._updatethreshold()
 
     def _updateOnInputsAmpli(self) -> None:
-        """Update selected ampli to custom and update treshold."""
+        """Update selected ampli to custom and update threshold."""
 
         self.selectedAmpliLabel.setText(self.customText)
-        self._updateTreshold()
+        self._updatethreshold()
 
-    def _updateTreshold(self) -> None:
-        """Update treshold result with current parameters."""
+    def _updatethreshold(self) -> None:
+        """Update threshold result with current parameters."""
 
         if not (
             self.impedanceValue.text()
@@ -436,17 +436,30 @@ class Window(QWidget):
             and self.ampliGainValue.text()
             and self.ampliPowerValue.text()
         ):
-            self.tresholdValue.setText("")
+            self.thresholdValue.setText("")
             return
 
-        treshold = Limiter(
+        limit = Limiter(
             int(self.impedanceValue.text()),
             self.speakerBaffleValue.currentText(),
             int(self.speakerPowerValue.text()),
             float(self.ampliGainValue.text()),
             int(self.ampliPowerValue.text()),
-        ).computeTreshold()
-        self.tresholdValue.setText(f"{treshold}")
+        )
+
+        softSpkMax, softAmpMax, softThreshold = limit.computeTreshold(smartLimit=True)
+        hardSpkMax, hardAmpMax, hardThreshold = limit.computeTreshold(smartLimit=False)
+
+        self.thresholdValue.setText(f"{softThreshold}")
+        self.thresholdValue.setToolTip(
+            f"soft limit = {softThreshold} dBu\n"
+            + f"soft speaker Vmax = {softSpkMax} V\n"
+            + f"soft ampli Vmax = {softSpkMax} V\n"
+            + "---------------------------------\n"
+            + f"hard limit = {hardThreshold} dBu\n"
+            + f"hard speaker Vmax = {hardSpkMax} V\n"
+            + f"hard ampli Vmax = {hardSpkMax} V"
+        )
 
 
 def run() -> None:

@@ -1,5 +1,12 @@
 class Speaker:
-    def __init__(self, reference: str, impedance: int, power: int, response: str, baffle: str) -> None:
+    def __init__(
+        self,
+        reference: str,
+        impedance: int,
+        power: int,
+        response: str,
+        baffle: str,
+    ) -> None:
         """Init all attributes.
 
         Parameters:
