@@ -447,18 +447,18 @@ class Window(QWidget):
             int(self.ampliPowerValue.text()),
         )
 
-        softSpkMax, softAmpMax, softThreshold = limit.computeTreshold(smartLimit=True)
-        hardSpkMax, hardAmpMax, hardThreshold = limit.computeTreshold(smartLimit=False)
+        smartSpkMax, smartAmpMax, smartThreshold = limit.computeTreshold(smartLimit=True)
+        trueSpkMax, trueAmpMax, trueThreshold = limit.computeTreshold(smartLimit=False)
 
-        self.thresholdValue.setText(f"{softThreshold}")
+        self.thresholdValue.setText(f"{smartThreshold}")
         self.thresholdValue.setToolTip(
-            f"soft limit = {softThreshold} dBu\n"
-            + f"soft speaker Vmax = {softSpkMax} V\n"
-            + f"soft ampli Vmax = {softSpkMax} V\n"
+            f"smart limit = {smartThreshold} dBu\n"
+            + f"smart speaker Vmax = {smartSpkMax} V\n"
+            + f"smart ampli Vmax = {smartAmpMax} V\n"
             + "---------------------------------\n"
-            + f"hard limit = {hardThreshold} dBu\n"
-            + f"hard speaker Vmax = {hardSpkMax} V\n"
-            + f"hard ampli Vmax = {hardSpkMax} V"
+            + f"true limit = {trueThreshold} dBu\n"
+            + f"true speaker Vmax = {trueSpkMax} V\n"
+            + f"true ampli Vmax = {trueAmpMax} V"
         )
 
 

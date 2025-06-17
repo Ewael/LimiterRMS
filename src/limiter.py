@@ -88,7 +88,7 @@ class Limiter:
         # We take the most strict threshold to protect ampli & speaker
         threshold = min(threshold_spk, threshold_amp)
         threshold = Decimal(threshold).quantize(
-            Decimal(".1"), rounding=(ROUND_DOWN if self.threshold > 0 else ROUND_UP)
+            Decimal(".1"), rounding=(ROUND_DOWN if threshold > 0 else ROUND_UP)
         )
 
         return (V_spk_max, V_amp_max, threshold)
