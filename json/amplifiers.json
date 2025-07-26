@@ -234,6 +234,46 @@
         "outputs": 4
     },
     {
+        "reference": "t.amp E-400",
+        "gain": 34,
+        "power": {
+            "8": 155,
+            "4": 310,
+            "8 (bridge)": 450
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "t.amp E-800",
+        "gain": 36,
+        "power": {
+            "8": 360,
+            "4": 490,
+            "8 (bridge)": 990
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "t.amp E-1200",
+        "gain": 41,
+        "power": {
+            "8": 680,
+            "4": 990,
+            "8 (bridge)": 1980
+        },
+        "outputs": 2
+    },
+    {
+        "reference": "t.amp E-1600",
+        "gain": 41,
+        "power": {
+            "8": 850,
+            "4": 1220,
+            "8 (bridge)": 2440
+        },
+        "outputs": 2
+    },   
+    {
         "reference": "t.amp TSA 4-1300",
         "gain": 37.8,
         "power": {
