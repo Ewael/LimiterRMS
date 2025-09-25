@@ -35,7 +35,7 @@ class Limiter:
         self.ampliPower = ampliPower
         self.sensitivity = sensitivity
 
-    def computeTreshold(self, smartLimit: bool) -> tuple[float, float, Decimal]:
+    def computeTreshold(self, smartLimit: bool) -> tuple[Decimal, Decimal, Decimal]:
         """Compute threshold for given speaker, amplifier and impedance at 0.775V sensitivity.
 
         Parameters:
@@ -91,4 +91,8 @@ class Limiter:
             Decimal(".1"), rounding=(ROUND_DOWN if threshold > 0 else ROUND_UP)
         )
 
-        return (V_spk_max, V_amp_max, threshold)
+        return (
+            Decimal(V_spk_max).quantize(Decimal(".01")),
+            Decimal(V_amp_max).quantize(Decimal(".01")),
+            threshold,
+        )

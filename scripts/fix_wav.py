@@ -1,19 +1,25 @@
 import os
 
 
-# Path to directory we will browse recursively to find all .wav
-dir_path1 = r"D:\Media\Musique\Rekordbox\Tracks"
-dir_path2 = r"C:\Users\Ewael\Music\PioneerDJ\Imported from Device\Contents"
-dir_path3 = r"C:\Users\Ewael\Documents\Son\Thomasson\Calage"
+# Paths to directories we will browse recursively to find all .wav
+paths = [
+    r"D:\Media\Musique\Rekordbox\Tracks",  # Elements
+    r"C:\Users\Ewael\Music\PioneerDJ\Imported from Device\Contents",  # Rekordbox
+    r"C:\Users\Ewael\Documents\Son\Thomasson\Calage",  # Calage
+    r"D:\Contents",  # USB key
+]
+
 
 def get_wav(dir_path: str) -> list[str]:
     """Return list with .wav files pathes."""
 
     tracks_wav = []
-    for root, _, files in os.walk(dir_path):
-        for file in files:
-            if file[-4:] == ".wav":
-                tracks_wav.append(rf"{root}{os.sep}{file}")
+    if os.path.exists(dir_path):
+        print(f"Searching wav in {dir_path}")
+        for root, _, files in os.walk(dir_path):
+            for file in files:
+                if file[-4:] == ".wav":
+                    tracks_wav.append(rf"{root}{os.sep}{file}")
     return tracks_wav
 
 
@@ -34,6 +40,7 @@ def fix_unspported(unsupported_tracks: list[str]) -> None:
     """Fix given tracks."""
 
     for track in unsupported_tracks:
+        print(f"Fixing {track}")
         with open(track, "rb") as f:
             content = list(f.read())
         content[20] = 0x01
@@ -43,7 +50,9 @@ def fix_unspported(unsupported_tracks: list[str]) -> None:
             print(f"Fixed: {track}")
 
 
-wav = get_wav(dir_path1) + get_wav(dir_path2) + get_wav(dir_path3)
+wav = []
+for path in paths:
+    wav += get_wav(path)
 print(f"Found {len(wav)} WAV files")
 uns = get_unsupported(wav)
 print(f"Found {len(uns)} unsupported WAV files")
