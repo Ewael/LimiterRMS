@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QLineEdit,
     QComboBox,
+    QTabWidget,
 )
 
 # Dark theme for Qt
@@ -357,11 +358,19 @@ class Window(QWidget):
         recapLayout.addLayout(recapLayoutLeft)
         recapLayout.addLayout(recapLayoutRight)
 
-        # Main layout
-        mainLayout = QVBoxLayout(self)
+        # Create QWidget for Limiter tab
+        limiterWidget = QWidget(self)
+        limiterWidgetName = "LimiterRMS"
+
+        # Limiter Widget layout
+        mainLayout = QVBoxLayout(limiterWidget)
         mainLayout.addLayout(selectionLayout)
         mainLayout.addLayout(recapLayout)
-        self.setLayout(mainLayout)
+        limiterWidget.setLayout(mainLayout)
+        
+        # Create tab widget for future tools
+        tab = QTabWidget(self)
+        tab.addTab(limiterWidget, limiterWidgetName)
 
         self.show()
 
