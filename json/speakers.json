@@ -196,6 +196,13 @@
         "baffle": "CLOSED"
     },
     {
+        "reference": "Turbosound TSW-218",
+        "impedance": 4,
+        "power": 3200,
+        "response": "30-100",
+        "baffle": "CLOSED"
+    },
+    {
         "reference": "Turbosound TA-890H Mid",
         "impedance": 16,
         "power": 200,
