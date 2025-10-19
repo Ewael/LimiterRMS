@@ -363,14 +363,18 @@ class Window(QWidget):
         limiterWidgetName = "LimiterRMS"
 
         # Limiter Widget layout
-        mainLayout = QVBoxLayout(limiterWidget)
-        mainLayout.addLayout(selectionLayout)
-        mainLayout.addLayout(recapLayout)
-        limiterWidget.setLayout(mainLayout)
+        limiterLayout = QVBoxLayout(limiterWidget)
+        limiterLayout.addLayout(selectionLayout)
+        limiterLayout.addLayout(recapLayout)
+        limiterWidget.setLayout(limiterLayout)
         
         # Create tab widget for future tools
         tab = QTabWidget(self)
         tab.addTab(limiterWidget, limiterWidgetName)
+        
+        # Create main layout that will contains tabs
+        mainLayout = QVBoxLayout(self)
+        mainLayout.addWidget(tab)
 
         self.show()
 
