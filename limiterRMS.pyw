@@ -108,6 +108,9 @@ class Window(QWidget):
         self.setWindowTitle(APP_NAME)
         self.setGeometry(400, 50, 900, 700)
 
+        """Limiter Tab
+        """
+
         # Get amplis and speakers data
         self.amplis = getAmplisSpecs(BASE_PATH + AMPLIFIERS)
         self.speakers = getSpeakersSpecs(BASE_PATH + SPEAKERS)
@@ -254,19 +257,19 @@ class Window(QWidget):
         )
 
         # Validators for user input
-        floatValidator = QDoubleValidator()
-        floatValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
-        floatValidator.setRange(0, 100)
-        floatValidator.setDecimals(2)
-        intValidator = QIntValidator()
-        intValidator.setRange(0, 50000)
+        limiterFloatValidator = QDoubleValidator()
+        limiterFloatValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        limiterFloatValidator.setRange(0, 100)
+        limiterFloatValidator.setDecimals(2)
+        limiterIntValidator = QIntValidator()
+        limiterIntValidator.setRange(0, 50000)
 
         # Values input
         fixedWidth = 68
         self.impedanceValue = QLineEdit()
         self.impedanceValue.setFixedWidth(fixedWidth)
         self.impedanceValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.impedanceValue.setValidator(intValidator)
+        self.impedanceValue.setValidator(limiterIntValidator)
         self.speakerBaffleValue = QComboBox()
         self.speakerBaffleValue.setFixedWidth(fixedWidth)
         self.speakerBaffleValue.addItem("CLOSED")
@@ -274,15 +277,15 @@ class Window(QWidget):
         self.speakerPowerValue = QLineEdit()
         self.speakerPowerValue.setFixedWidth(fixedWidth)
         self.speakerPowerValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.speakerPowerValue.setValidator(intValidator)
+        self.speakerPowerValue.setValidator(limiterIntValidator)
         self.ampliGainValue = QLineEdit()
         self.ampliGainValue.setFixedWidth(fixedWidth)
         self.ampliGainValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.ampliGainValue.setValidator(floatValidator)
+        self.ampliGainValue.setValidator(limiterFloatValidator)
         self.ampliPowerValue = QLineEdit()
         self.ampliPowerValue.setFixedWidth(fixedWidth)
         self.ampliPowerValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.ampliPowerValue.setValidator(intValidator)
+        self.ampliPowerValue.setValidator(limiterIntValidator)
         self.thresholdValue = QLineEdit()
         self.thresholdValue.setFixedWidth(fixedWidth)
         self.thresholdValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -367,11 +370,110 @@ class Window(QWidget):
         limiterLayout.addLayout(selectionLayout)
         limiterLayout.addLayout(recapLayout)
         limiterWidget.setLayout(limiterLayout)
-        
+
+        """Amp gain tab
+        """
+
+        # Validators for user input
+        ampGainFloatValidator = QDoubleValidator()
+        ampGainFloatValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        ampGainFloatValidator.setRange(0, 500)
+        ampGainFloatValidator.setDecimals(4)
+
+        # How to correctly mesure amplifier gain
+        sineWaveInfo = QLabel("Generate a 50Hz sine wave")
+        sineWaveInfo.setStyleSheet("font-weight: bold")
+
+        # Voltage IN and voltage OUT
+        voltageInInfo = QLabel("Voltage value BEFORE amplification:")
+        voltageOutInfo = QLabel("Voltage value AFTER amplification:")
+        voltageInValue = QLineEdit()
+        voltageInValue.setFixedWidth(fixedWidth)
+        voltageInValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        voltageInValue.setValidator(ampGainFloatValidator)
+        voltageInValue.setToolTip("XLR - between pin 2 and pin 3")
+        voltageOutValue = QLineEdit()
+        voltageOutValue.setFixedWidth(fixedWidth)
+        voltageOutValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        voltageOutValue.setValidator(ampGainFloatValidator)
+        voltageOutValue.setToolTip("SPK - between +x/-x (most of the time +1/-1)")
+        voltageInUnit = QLabel("V")
+        voltageOutUnit = QLabel("V")
+
+        # Ampli gain
+        ampliGainInfo = QLabel("Amplifier gain:")
+        ampliGainInfo.setStyleSheet("color: red; font-weight: bold")
+        ampliGainValue = QLineEdit()
+        ampliGainValue.setFixedWidth(fixedWidth)
+        ampliGainValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        ampliGainValue.setReadOnly(True)  # ampli gain is read-only
+        ampliGainValue.setStyleSheet(
+            "background-color: #FFCCCC; color: red; font-weight: bold"
+        )
+        ampliGainUnit = QLabel("dB")
+        ampliGainUnit.setStyleSheet("color: red; font-weight: bold")
+
+        # Layout for informations about each value
+        voltageInfoLayout = QVBoxLayout()
+        voltageInfoLayout.addWidget(
+            voltageInInfo, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        voltageInfoLayout.addWidget(
+            voltageOutInfo, alignment=Qt.AlignmentFlag.AlignRight
+        )
+        voltageInfoLayout.addWidget(
+            ampliGainInfo, alignment=Qt.AlignmentFlag.AlignRight
+        )
+
+        # Layout to enter in and out voltages values for 50Hz sine wave
+        voltageValuesLayout = QVBoxLayout()
+        voltageValuesLayout.addWidget(
+            voltageInValue, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        voltageValuesLayout.addWidget(
+            voltageOutValue, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        voltageValuesLayout.addWidget(
+            ampliGainValue, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+
+        # Layout for units
+        voltageUnitsLayout = QVBoxLayout()
+        voltageUnitsLayout.addWidget(voltageInUnit)
+        voltageUnitsLayout.addWidget(voltageOutUnit)
+        voltageUnitsLayout.addWidget(ampliGainUnit)
+
+        # Infos and values side by side layout
+        infoAndValuesLayout = QHBoxLayout()
+        for _ in range(10):  # spacing above
+            infoAndValuesLayout.addWidget(QLabel())
+        infoAndValuesLayout.addLayout(voltageInfoLayout)
+        infoAndValuesLayout.addLayout(voltageValuesLayout)
+        infoAndValuesLayout.addLayout(voltageUnitsLayout)
+        for _ in range(10):  # spacing under
+            infoAndValuesLayout.addWidget(QLabel())
+
+        # Widget that will go in the tab
+        ampGainWidget = QWidget(self)
+        ampGainWidgetName = "Amplifier gain"
+
+        # Ampli gain Widget layout
+        ampGainLayout = QVBoxLayout(ampGainWidget)
+        for _ in range(10):  # spacing above
+            ampGainLayout.addWidget(QLabel())
+        ampGainLayout.addWidget(sineWaveInfo, alignment=Qt.AlignmentFlag.AlignCenter)
+        ampGainLayout.addLayout(infoAndValuesLayout)
+        for _ in range(10):  # spacing under
+            ampGainLayout.addWidget(QLabel())
+
+        """Add tabs
+        """
+
         # Create tab widget for future tools
         tab = QTabWidget(self)
         tab.addTab(limiterWidget, limiterWidgetName)
-        
+        tab.addTab(ampGainWidget, ampGainWidgetName)
+
         # Create main layout that will contains tabs
         mainLayout = QVBoxLayout(self)
         mainLayout.addWidget(tab)
@@ -460,7 +562,9 @@ class Window(QWidget):
             int(self.ampliPowerValue.text()),
         )
 
-        smartSpkMax, smartAmpMax, smartThreshold = limit.computeTreshold(smartLimit=True)
+        smartSpkMax, smartAmpMax, smartThreshold = limit.computeTreshold(
+            smartLimit=True
+        )
         trueSpkMax, trueAmpMax, trueThreshold = limit.computeTreshold(smartLimit=False)
 
         self.thresholdValue.setText(f"{smartThreshold}")
