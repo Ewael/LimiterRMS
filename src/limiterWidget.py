@@ -375,7 +375,6 @@ class LimiterWidget(QWidget):
     def _updatethreshold(self) -> None:
         """Update threshold result with current parameters."""
 
-        self.impedanceValue.setText(self.impedanceValue.text().replace(",", "."))
         self.speakerPowerValue.setText(self.speakerPowerValue.text().replace(",", "."))
         self.ampliGainValue.setText(self.ampliGainValue.text().replace(",", "."))
         self.ampliPowerValue.setText(self.ampliPowerValue.text().replace(",", "."))
