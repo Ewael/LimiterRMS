@@ -35,9 +35,12 @@ class LimiterWidget(QWidget):
     thresholdUnit = "dBu"
     customText = "[Custom]"
     limiterWidgetName = "LimiterRMS"
+    fixedWidth = 68
 
     def __init__(self, parent: QWidget = None) -> None:
         """Create the widget."""
+
+        super().__init__(parent)
 
         # Get amplis and speakers data
         self.amplis = self._getAmplisSpecs(BASE_PATH + AMPLIFIERS_FILE)
@@ -193,29 +196,28 @@ class LimiterWidget(QWidget):
         limiterIntValidator.setRange(0, 50000)
 
         # Values input
-        fixedWidth = 68
         self.impedanceValue = QLineEdit()
-        self.impedanceValue.setFixedWidth(fixedWidth)
+        self.impedanceValue.setFixedWidth(self.fixedWidth)
         self.impedanceValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.impedanceValue.setValidator(limiterIntValidator)
         self.speakerBaffleValue = QComboBox()
-        self.speakerBaffleValue.setFixedWidth(fixedWidth)
+        self.speakerBaffleValue.setFixedWidth(self.fixedWidth)
         self.speakerBaffleValue.addItem("CLOSED")
         self.speakerBaffleValue.addItem("OPEN")
         self.speakerPowerValue = QLineEdit()
-        self.speakerPowerValue.setFixedWidth(fixedWidth)
+        self.speakerPowerValue.setFixedWidth(self.fixedWidth)
         self.speakerPowerValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.speakerPowerValue.setValidator(limiterIntValidator)
         self.ampliGainValue = QLineEdit()
-        self.ampliGainValue.setFixedWidth(fixedWidth)
+        self.ampliGainValue.setFixedWidth(self.fixedWidth)
         self.ampliGainValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.ampliGainValue.setValidator(limiterFloatValidator)
         self.ampliPowerValue = QLineEdit()
-        self.ampliPowerValue.setFixedWidth(fixedWidth)
+        self.ampliPowerValue.setFixedWidth(self.fixedWidth)
         self.ampliPowerValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.ampliPowerValue.setValidator(limiterIntValidator)
         self.thresholdValue = QLineEdit()
-        self.thresholdValue.setFixedWidth(fixedWidth)
+        self.thresholdValue.setFixedWidth(self.fixedWidth)
         self.thresholdValue.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.thresholdValue.setReadOnly(True)  # threshold is read-only
         self.thresholdValue.setStyleSheet(
@@ -273,6 +275,7 @@ class LimiterWidget(QWidget):
         self.speakerPowerValue.textChanged.connect(self._updateOnInputsSpeaker)
         self.ampliGainValue.textChanged.connect(self._updateOnInputsAmpli)
         self.ampliPowerValue.textChanged.connect(self._updateOnInputsAmpli)
+        self._updatethreshold()
 
         # Recap layout
         recapLayoutLeft = QHBoxLayout()
@@ -372,12 +375,21 @@ class LimiterWidget(QWidget):
     def _updatethreshold(self) -> None:
         """Update threshold result with current parameters."""
 
+        self.impedanceValue.setText(self.impedanceValue.text().replace(",", "."))
+        self.speakerPowerValue.setText(self.speakerPowerValue.text().replace(",", "."))
+        self.ampliGainValue.setText(self.ampliGainValue.text().replace(",", "."))
+        self.ampliPowerValue.setText(self.ampliPowerValue.text().replace(",", "."))
+
+        # Not empty and not 0
         if not (
             self.impedanceValue.text()
+            and int(self.impedanceValue.text())
             and self.speakerBaffleValue.currentText()
             and self.speakerPowerValue.text()
+            and int(self.speakerPowerValue.text())
             and self.ampliGainValue.text()
             and self.ampliPowerValue.text()
+            and int(self.ampliPowerValue.text())
         ):
             self.thresholdValue.setText("")
             return

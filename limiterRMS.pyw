@@ -10,7 +10,7 @@ from PySide6.QtWidgets import (
 # Dark theme for Qt
 import qdarktheme
 
-# from src.ampGainWidget import AmpGainWidget
+from src.ampGainWidget import AmpGainWidget
 from src.limiterWidget import LimiterWidget
 
 
@@ -28,12 +28,12 @@ class Window(QWidget):
 
         # Get widgets for tabs
         limiterWidget = LimiterWidget(self)
-        # ampGainWidget = AmpGainWidget(self)
+        ampGainWidget = AmpGainWidget(self)
 
         # Create tab widget for future tools
         tab = QTabWidget(self)
         tab.addTab(limiterWidget.getWidget(), limiterWidget.getWidgetName())
-        # tab.addTab(ampGainWidget, ampGainWidgetName)
+        tab.addTab(ampGainWidget.getWidget(), ampGainWidget.getWidgetName())
 
         # Create main layout that will contains tabs
         mainLayout = QVBoxLayout(self)

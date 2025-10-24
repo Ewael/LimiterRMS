@@ -1,8 +1,8 @@
 from decimal import Decimal
-from math import log10, sqrt
+from math import log10
 
 
-class AmplifierGain(float):
+class AmpGain:
     def __init__(self, voltageIn: float, voltageOut: float) -> None:
         """Initiate all attributes.
 
@@ -14,7 +14,12 @@ class AmplifierGain(float):
         self.voltageIn = voltageIn
         self.voltageOut = voltageOut
 
-    def computeGain(self) -> Decimal:
-        """ """
+    def computeAmpGain(self) -> Decimal:
+        """Return amplifier gain from V_IN and V_OUT.
 
-        return 0
+        U_out = U_in * 10^( gain / 20 )
+        <=> gain = 20 * log10( U_out / U_in )
+        """
+
+        ampGain = 20 * log10(self.voltageOut / self.voltageIn)
+        return Decimal(ampGain).quantize(Decimal(".01"))
