@@ -23,11 +23,14 @@ P_amp = 4200
 gain_amp = 44
 impedance = 8
 
-U_HP_max = sqrt(P_HP * impedance) # tension max admissible par le HP
+ # tension max admissible par le HP
+U_HP_max = sqrt(P_HP * impedance)
 print(U_HP_max)
 
-U_HP_max_amp_in = U_HP_max / pow(10, (gain_amp/20)) # tension ampli IN qui donne U_HP_max en OUT
+# tension ampli IN qui donne U_HP_max en OUT
+U_HP_max_amp_in = U_HP_max / pow(10, (gain_amp/20))
 print(U_HP_max_amp_in)
 
-dBu_max_in = 20 * log10(U_HP_max_amp_in / 0.775) # max IN en dBu
+# max IN en dBu
+dBu_max_in = 20 * log10(U_HP_max_amp_in / 0.775)
 print(dBu_max_in)
