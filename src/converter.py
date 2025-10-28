@@ -3,10 +3,17 @@ from math import sqrt
 
 
 def freqToDistance(freq: int, c: float) -> Decimal:
-    """Return wave length (m) from given freq and c."""
+    """Return wave length (m) from given freq (Hz) and c (m.s-1)."""
 
     distance = c / freq
     return Decimal(distance).quantize(Decimal(".01"))
+
+
+def freqToTime(freq: int, c: float) -> Decimal:
+    """Return period (ms) from given freq (Hs)."""
+
+    time = 1 / (freq * 0.001)
+    return Decimal(time).quantize(Decimal(".001"))
 
 
 def distanceToTime(distance: float, c: float) -> Decimal:
@@ -16,11 +23,25 @@ def distanceToTime(distance: float, c: float) -> Decimal:
     return Decimal(time).quantize(Decimal(".001"))
 
 
-def timeToFreq(time: float) -> int:
+def distanceToFreq(distance: float, c: float) -> Decimal:
+    """ "Return freq (Hz) from given distance (m) and c (m.s-1)."""
+
+    freq = c / distance
+    return Decimal(freq).quantize(Decimal(".01"))
+
+
+def timeToFreq(time: float) -> Decimal:
     """Return freq (Hz) from given time (ms)."""
 
     freq = 1 / (time * 0.001)
-    return int(freq)
+    return Decimal(freq).quantize(Decimal(".01"))
+
+
+def timeToDistance(time: float, c: float) -> Decimal:
+    """Return distance (m) from given time (ms)."""
+
+    distance = (time * c) / 1000
+    return Decimal(distance).quantize(Decimal(".01"))
 
 
 def computeC(temperature: float) -> int:
