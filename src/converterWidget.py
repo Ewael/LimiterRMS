@@ -17,6 +17,7 @@ class ConverterWidget(QWidget):
     fixedWidth = 68
     converterWidgetName = "Converter"
     defaultTemperature = 20
+    defaultFreq = 100
 
     def __init__(self, parent: QWidget = None) -> None:
         """Create widget and methods to convert values."""
@@ -54,7 +55,6 @@ class ConverterWidget(QWidget):
         self.temperature = QLineEdit()
         self.temperature.setFixedWidth(self.fixedWidth)
         self.temperature.setValidator(temperatureValidator)
-        self.temperature.setText(f"{self.defaultTemperature}")
         self.c = QLineEdit()
         self.c.setFixedWidth(self.fixedWidth)
         self.c.setValidator(cValidator)
@@ -65,7 +65,10 @@ class ConverterWidget(QWidget):
         self.time.textChanged.connect(self._updateValuesFromTime)
         self.freq.textChanged.connect(self._updateValuesFromFreq)
         self.temperature.textChanged.connect(self._updateC)
-        self._updateC()
+
+        # Default values
+        self.freq.setText(f"{self.defaultFreq}")
+        self.temperature.setText(f"{self.defaultTemperature}")
 
         # Units
         distanceUnit = QLabel("m")
@@ -128,6 +131,7 @@ class ConverterWidget(QWidget):
         for _ in range(5):  # top padding
             mainLayout.addWidget(QLabel(""))
         mainLayout.addLayout(sosLayout)
+        mainLayout.addWidget(QLabel(""))  # mid padding
         mainLayout.addLayout(valuesLayout)
         for _ in range(5):  # bot padding
             mainLayout.addWidget(QLabel(""))
