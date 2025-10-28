@@ -2,24 +2,24 @@ from decimal import Decimal
 from math import sqrt
 
 
-def freqToDistance(freq: float, c: float) -> Decimal:
+def freqToDistance(freq: int, c: float) -> Decimal:
     """Return wave length (m) from given freq and c."""
 
     distance = c / freq
-    return Decimal(distance).quantize(".01")
+    return Decimal(distance).quantize(Decimal(".01"))
 
 
 def distanceToTime(distance: float, c: float) -> Decimal:
     """Return time (ms) from given d and c."""
 
-    time = distance / c
-    return Decimal(time).quantize(".001")
+    time = (distance / c) * 1000  # time (ms)
+    return Decimal(time).quantize(Decimal(".001"))
 
 
 def timeToFreq(time: float) -> int:
-    """Return freq (Hz) from given time."""
+    """Return freq (Hz) from given time (ms)."""
 
-    freq = 1 / time
+    freq = 1 / (time * 0.001)
     return int(freq)
 
 

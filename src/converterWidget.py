@@ -16,7 +16,7 @@ class ConverterWidget(QWidget):
 
     fixedWidth = 68
     converterWidgetName = "Converter"
-    defaultTemperature = 21
+    defaultTemperature = 20
 
     def __init__(self, parent: QWidget = None) -> None:
         """Create widget and methods to convert values."""
@@ -94,9 +94,7 @@ class ConverterWidget(QWidget):
 
         # Speed of sound units layout
         sosUnitsLayout = QVBoxLayout()
-        sosUnitsLayout.addWidget(
-            temperatureUnit, alignment=Qt.AlignmentFlag.AlignLeft
-        )
+        sosUnitsLayout.addWidget(temperatureUnit, alignment=Qt.AlignmentFlag.AlignLeft)
         sosUnitsLayout.addWidget(cUnit, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Speed of sound main layout (with padding)
@@ -155,11 +153,21 @@ class ConverterWidget(QWidget):
             self.freq.setText("")
             return
 
+        # Check that speed of sound is set
+        self._checkTemperature()
+
+        # Do all conversions from distance
         distance = float(self.distance.text())
-        time = distanceToTime(distance)
-        freq = timeToFreq(time)
+        time = distanceToTime(float(distance), float(self.c.text()))
+        freq = timeToFreq(float(time))
+
+        # We disconnect before update to avoid infinite connect loop
+        self.time.textChanged.disconnect(self._updateValuesFromTime)
+        self.freq.textChanged.disconnect(self._updateValuesFromFreq)
         self.time.setText(f"{time}")
         self.freq.setText(f"{freq}")
+        self.time.textChanged.connect(self._updateValuesFromTime)
+        self.freq.textChanged.connect(self._updateValuesFromFreq)
 
     def _updateValuesFromTime(self) -> None:
         """Update distance and frequency values."""
@@ -167,17 +175,26 @@ class ConverterWidget(QWidget):
         self.time.setText(self.time.text().replace(",", "."))
 
         # Check that we can convert correctly
-        if not (
-            self.distance.text()
-            and self.time.text()
-            and self.freq.text()
-            and float(self.distance.text())
-            and float(self.time.text())
-            and int(self.freq.text())
-        ):
+        if not (self.time.text() and float(self.time.text())):
             self.distance.setText("")
             self.freq.setText("")
             return
+
+        # Check that speed of sound is set
+        self._checkTemperature()
+
+        # Do all conversions from time
+        time = float(self.time.text())
+        freq = timeToFreq(float(time))
+        distance = freqToDistance(freq, float(self.c.text()))
+
+        # We disconnect before update to avoid infinite connect loop
+        self.distance.textChanged.disconnect(self._updateValuesFromDistance)
+        self.freq.textChanged.disconnect(self._updateValuesFromFreq)
+        self.distance.setText(f"{distance}")
+        self.freq.setText(f"{freq}")
+        self.distance.textChanged.connect(self._updateValuesFromDistance)
+        self.freq.textChanged.connect(self._updateValuesFromFreq)
 
     def _updateValuesFromFreq(self) -> None:
         """Update time and distance values."""
@@ -185,17 +202,26 @@ class ConverterWidget(QWidget):
         self.freq.setText(self.freq.text().replace(",", "."))
 
         # Check that we can convert correctly
-        if not (
-            self.distance.text()
-            and self.time.text()
-            and self.freq.text()
-            and float(self.distance.text())
-            and float(self.time.text())
-            and int(self.freq.text())
-        ):
+        if not (self.freq.text() and int(self.freq.text())):
             self.distance.setText("")
             self.time.setText("")
             return
+
+        # Check that speed of sound is set
+        self._checkTemperature()
+
+        # Do all conversions from freq
+        freq = int(self.freq.text())
+        distance = freqToDistance(freq, float(self.c.text()))
+        time = distanceToTime(float(distance), float(self.c.text()))
+
+        # We disconnect before update to avoid infinite connect loop
+        self.distance.textChanged.disconnect(self._updateValuesFromDistance)
+        self.time.textChanged.disconnect(self._updateValuesFromTime)
+        self.distance.setText(f"{distance}")
+        self.time.setText(f"{time}")
+        self.distance.textChanged.connect(self._updateValuesFromDistance)
+        self.time.textChanged.connect(self._updateValuesFromTime)
 
     def _updateC(self) -> None:
         """Update speed of sound (m.s-1)."""
@@ -211,3 +237,12 @@ class ConverterWidget(QWidget):
             temperature = float(self.temperature.text())
 
         self.c.setText(f"{computeC(temperature)}")
+
+    def _checkTemperature(self):
+        """Check that temperature is set so we have c.
+
+        If not, then set it to default temperature.
+        """
+
+        if not self.temperature.text():
+            self.temperature.setText(f"{self.defaultTemperature}")
