@@ -35,6 +35,13 @@
         "baffle": "CLOSED"
     },
     {
+        "reference": "HK Audio Premium Pro 15",
+        "impedance": 8,
+        "power": 400,
+        "response": "60-19k",
+        "baffle": "CLOSED"
+    },
+    {
         "reference": "Orphee CLA 800",
         "impedance": 8,
         "power": 300,
