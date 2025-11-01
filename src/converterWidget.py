@@ -8,8 +8,10 @@ from PySide6.QtWidgets import (
     QWidget,
     QLabel,
     QLineEdit,
+    QLayout,
 )
 
+from src.constants import RO_STYLESHEET, FIXED_WIDTH
 from src.converter import (
     freqToDistance,
     freqToTime,
@@ -24,29 +26,59 @@ from src.converter import (
 class ConverterWidget(QWidget):
     """Class for converter widget tab."""
 
-    fixedWidth = 68
     converterWidgetName = "Converter"
     defaultTemperature = 20
     defaultFreq = 100
 
     def __init__(self, parent: QWidget = None) -> None:
-        """Create widget and methods to convert values."""
+        """Create widget and methods to convert values.
+
+        We have:
+        - one speed of sound layout depending on temperature,
+        - two converter layouts to easily compare different setups.
+
+        Conversion is frequency (Hz) - lambda (m) - period (T).
+        """
+
+        super().__init__(parent)
+
+        # Main tab widget
+        self.converterWidget = QWidget(parent)
+
+        # Create layouts
+        cLayout = CLayout(self, self.defaultTemperature)
+        valuesLayout = ValuesLayout(self, self.defaultFreq, cLayout)
+
+        # Main tab layout
+        mainLayout = QVBoxLayout(self.converterWidget)
+        for _ in range(5):  # top padding
+            mainLayout.addWidget(QLabel(""))
+        mainLayout.addLayout(cLayout.getLayout())
+        mainLayout.addWidget(QLabel(""))  # mid padding
+        mainLayout.addLayout(valuesLayout.getLayout())
+        for _ in range(5):  # bot padding
+            mainLayout.addWidget(QLabel(""))
+
+    def getWidget(self) -> QWidget:
+        """Return created QWidget."""
+
+        return self.converterWidget
+
+    def getWidgetName(self) -> QWidget:
+        """Return widget name."""
+
+        return self.converterWidgetName
+
+
+class CLayout(QWidget):
+    """Class for speed of sound (c) layout with all connections."""
+
+    def __init__(self, parent: QWidget, defaultTemperature: float):
+        """Define all widgets in layout and make connections."""
 
         super().__init__(parent)
 
         # Validators for user input
-        distanceValidator = QDoubleValidator()
-        distanceValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
-        distanceValidator.setRange(0, 10000)
-        distanceValidator.setDecimals(2)
-        timeValidator = QDoubleValidator()
-        timeValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
-        timeValidator.setRange(0, 30000)
-        timeValidator.setDecimals(3)
-        freqValidator = QDoubleValidator()
-        freqValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
-        freqValidator.setRange(0, 40000)
-        freqValidator.setDecimals(2)
         temperatureValidator = QDoubleValidator()
         temperatureValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
         temperatureValidator.setRange(-100, 100)
@@ -54,38 +86,20 @@ class ConverterWidget(QWidget):
         cValidator = QIntValidator()
         cValidator.setRange(0, 400)
 
-        # Stylesheet for read-only values
-        graySS = "background-color: #111111"
-
         # Values input
-        self.distance = self._getQLineEdit(distanceValidator)
-        self.distance2 = self._getQLineEdit(
-            distanceValidator, readOnly=True, styleSheet=graySS
+        self.temperature = getQLineEdit(FIXED_WIDTH, temperatureValidator)
+        self.c = getQLineEdit(
+            FIXED_WIDTH, cValidator, readOnly=True, styleSheet=RO_STYLESHEET
         )
-        self.distance4 = self._getQLineEdit(
-            distanceValidator, readOnly=True, styleSheet=graySS
-        )
-        self.time = self._getQLineEdit(timeValidator)
-        self.time2 = self._getQLineEdit(timeValidator, readOnly=True, styleSheet=graySS)
-        self.time4 = self._getQLineEdit(timeValidator, readOnly=True, styleSheet=graySS)
-        self.freq = self._getQLineEdit(freqValidator)
-        self.temperature = self._getQLineEdit(temperatureValidator)
-        self.c = self._getQLineEdit(cValidator, readOnly=True, styleSheet=graySS)
 
         # Connections to update on each user input
-        self.distance.textChanged.connect(self._updateValuesFromDistance)
-        self.time.textChanged.connect(self._updateValuesFromTime)
-        self.freq.textChanged.connect(self._updateValuesFromFreq)
         self.temperature.textChanged.connect(self._updateC)
 
         # Default values
-        self.temperature.setText(f"{self.defaultTemperature}")
-        self.freq.setText(f"{self.defaultFreq}")
+        self.temperature.setText(f"{defaultTemperature}")
+        self.defaultTemperature = defaultTemperature
 
         # Units
-        distanceUnit = QLabel("m")
-        timeUnit = QLabel("ms")
-        freqUnit = QLabel("Hz")
         temperatureUnit = QLabel("℃")
         cUnit = QLabel("m.s-1")
 
@@ -113,14 +127,99 @@ class ConverterWidget(QWidget):
         sosUnitsLayout.addWidget(cUnit, alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Speed of sound main layout (with padding)
-        sosLayout = QHBoxLayout()
+        self.cLayout = QHBoxLayout()
         for _ in range(5):  # spacing on the left
-            sosLayout.addWidget(QLabel())
-        sosLayout.addLayout(sosLabelsLayout)
-        sosLayout.addLayout(sosValuesLayout)
-        sosLayout.addLayout(sosUnitsLayout)
+            self.cLayout.addWidget(QLabel())
+        self.cLayout.addLayout(sosLabelsLayout)
+        self.cLayout.addLayout(sosValuesLayout)
+        self.cLayout.addLayout(sosUnitsLayout)
         for _ in range(5):  # spacing on the left
-            sosLayout.addWidget(QLabel())
+            self.cLayout.addWidget(QLabel())
+
+    def getLayout(self) -> QLayout:
+        """Return created layout."""
+
+        return self.cLayout
+
+    def _updateC(self) -> None:
+        """Update speed of sound (m.s-1)."""
+
+        if (not self.temperature.text()) or self.temperature.text() == "-":
+            self.c.setText("")
+            return
+
+        self.temperature.setText(self.temperature.text().replace(",", "."))
+        if self.temperature.text()[0] == "-":
+            temperature = -1 * float(self.temperature.text()[1:])
+        else:
+            temperature = float(self.temperature.text())
+
+        self.c.setText(f"{computeC(temperature)}")
+
+    def checkTemperature(self):
+        """Check that temperature is set so we have c.
+
+        If not, then set it to default temperature.
+        """
+
+        if not self.temperature.text():
+            self.temperature.setText(f"{self.defaultTemperature}")
+
+
+class ValuesLayout(QWidget):
+    """Class for conversion values layout, with all connections."""
+
+    def __init__(self, parent: QWidget, defaultFreq: float, cLayout: CLayout) -> None:
+        """Create layout and all connections with QLineEdit objects."""
+
+        super().__init__(parent)
+
+        # Reference to, not a copy
+        self.cLayout = cLayout
+
+        # Validators for user input
+        distanceValidator = QDoubleValidator()
+        distanceValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        distanceValidator.setRange(0, 10000)
+        distanceValidator.setDecimals(2)
+        timeValidator = QDoubleValidator()
+        timeValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        timeValidator.setRange(0, 30000)
+        timeValidator.setDecimals(3)
+        freqValidator = QDoubleValidator()
+        freqValidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        freqValidator.setRange(0, 40000)
+        freqValidator.setDecimals(2)
+
+        # Values input
+        self.distance = getQLineEdit(FIXED_WIDTH, distanceValidator)
+        self.distance2 = getQLineEdit(
+            FIXED_WIDTH, distanceValidator, readOnly=True, styleSheet=RO_STYLESHEET
+        )
+        self.distance4 = getQLineEdit(
+            FIXED_WIDTH, distanceValidator, readOnly=True, styleSheet=RO_STYLESHEET
+        )
+        self.time = getQLineEdit(FIXED_WIDTH, timeValidator)
+        self.time2 = getQLineEdit(
+            FIXED_WIDTH, timeValidator, readOnly=True, styleSheet=RO_STYLESHEET
+        )
+        self.time4 = getQLineEdit(
+            FIXED_WIDTH, timeValidator, readOnly=True, styleSheet=RO_STYLESHEET
+        )
+        self.freq = getQLineEdit(FIXED_WIDTH, freqValidator)
+
+        # Connections to update on each user input
+        self.distance.textChanged.connect(self._updateValuesFromDistance)
+        self.time.textChanged.connect(self._updateValuesFromTime)
+        self.freq.textChanged.connect(self._updateValuesFromFreq)
+
+        # Default values
+        self.freq.setText(f"{defaultFreq}")
+
+        # Units
+        distanceUnit = QLabel("m")
+        timeUnit = QLabel("ms")
+        freqUnit = QLabel("Hz")
 
         # Layouts for /4 and /2 values
         freqLayout = QVBoxLayout()
@@ -135,40 +234,22 @@ class ConverterWidget(QWidget):
         timeLayout.addWidget(self.time2, alignment=Qt.AlignmentFlag.AlignRight)
 
         # Layout for values line
-        valuesLayout = QHBoxLayout()
+        self.valuesLayout = QHBoxLayout()
         for _ in range(5):  # spacing on the left
-            valuesLayout.addWidget(QLabel())
-        valuesLayout.addLayout(freqLayout)
-        valuesLayout.addWidget(freqUnit, alignment=Qt.AlignmentFlag.AlignLeft)
-        valuesLayout.addLayout(distanceLayout)
-        valuesLayout.addWidget(distanceUnit, alignment=Qt.AlignmentFlag.AlignLeft)
-        valuesLayout.addLayout(timeLayout)
-        valuesLayout.addWidget(timeUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+            self.valuesLayout.addWidget(QLabel())
+        self.valuesLayout.addLayout(freqLayout)
+        self.valuesLayout.addWidget(freqUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.valuesLayout.addLayout(distanceLayout)
+        self.valuesLayout.addWidget(distanceUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.valuesLayout.addLayout(timeLayout)
+        self.valuesLayout.addWidget(timeUnit, alignment=Qt.AlignmentFlag.AlignLeft)
         for _ in range(5):  # spacing on the right
-            valuesLayout.addWidget(QLabel())
+            self.valuesLayout.addWidget(QLabel())
 
-        # Main tab widget
-        self.converterWidget = QWidget(parent)
+    def getLayout(self) -> QLayout:
+        """Return created layout."""
 
-        # Main tab layout
-        mainLayout = QVBoxLayout(self.converterWidget)
-        for _ in range(5):  # top padding
-            mainLayout.addWidget(QLabel(""))
-        mainLayout.addLayout(sosLayout)
-        mainLayout.addWidget(QLabel(""))  # mid padding
-        mainLayout.addLayout(valuesLayout)
-        for _ in range(5):  # bot padding
-            mainLayout.addWidget(QLabel(""))
-
-    def getWidget(self) -> QWidget:
-        """Return created QWidget."""
-
-        return self.converterWidget
-
-    def getWidgetName(self) -> QWidget:
-        """Return widget name."""
-
-        return self.converterWidgetName
+        return self.valuesLayout
 
     def _updateValuesFromDistance(self) -> None:
         """Update time and frequency values."""
@@ -182,11 +263,11 @@ class ConverterWidget(QWidget):
             return
 
         # Check that speed of sound is set
-        self._checkTemperature()
+        self.cLayout.checkTemperature()
 
         # Do all conversions from distance
         distance = float(self.distance.text())
-        c = float(self.c.text())
+        c = float(self.cLayout.c.text())
 
         # We disconnect before update to avoid infinite connect loop
         self.time.textChanged.disconnect(self._updateValuesFromTime)
@@ -211,11 +292,11 @@ class ConverterWidget(QWidget):
             return
 
         # Check that speed of sound is set
-        self._checkTemperature()
+        self.cLayout.checkTemperature()
 
         # Do all conversions from time
         time = float(self.time.text())
-        c = float(self.c.text())
+        c = float(self.cLayout.c.text())
 
         # We disconnect before update to avoid infinite connect loop
         self.distance.textChanged.disconnect(self._updateValuesFromDistance)
@@ -240,11 +321,11 @@ class ConverterWidget(QWidget):
             return
 
         # Check that speed of sound is set
-        self._checkTemperature()
+        self.cLayout.checkTemperature()
 
         # Do all conversions from freq
         freq = float(self.freq.text())
-        c = float(self.c.text())
+        c = float(self.cLayout.c.text())
 
         # We disconnect before update to avoid infinite connect loop
         self.distance.textChanged.disconnect(self._updateValuesFromDistance)
@@ -267,10 +348,10 @@ class ConverterWidget(QWidget):
             f"{Decimal(float(self.distance.text()) / 4).quantize(Decimal(".01"))}"
         )
         self.time2.setText(
-            f"{distanceToTime(float(self.distance2.text()), float(self.c.text()))}"
+            f"{distanceToTime(float(self.distance2.text()), float(self.cLayout.c.text()))}"
         )
         self.time4.setText(
-            f"{distanceToTime(float(self.distance4.text()), float(self.c.text()))}"
+            f"{distanceToTime(float(self.distance4.text()), float(self.cLayout.c.text()))}"
         )
 
     def _resetTime(self) -> None:
@@ -292,38 +373,15 @@ class ConverterWidget(QWidget):
 
         self.freq.setText("")
 
-    def _updateC(self) -> None:
-        """Update speed of sound (m.s-1)."""
 
-        if (not self.temperature.text()) or self.temperature.text() == "-":
-            self.c.setText("")
-            return
+def getQLineEdit(
+    fixedWidth: int, validator: QValidator, readOnly: bool = False, styleSheet: str = ""
+) -> QLineEdit:
+    """Return QLineEdit with given params."""
 
-        self.temperature.setText(self.temperature.text().replace(",", "."))
-        if self.temperature.text()[0] == "-":
-            temperature = -1 * float(self.temperature.text()[1:])
-        else:
-            temperature = float(self.temperature.text())
-
-        self.c.setText(f"{computeC(temperature)}")
-
-    def _checkTemperature(self):
-        """Check that temperature is set so we have c.
-
-        If not, then set it to default temperature.
-        """
-
-        if not self.temperature.text():
-            self.temperature.setText(f"{self.defaultTemperature}")
-
-    def _getQLineEdit(
-        self, validator: QValidator, readOnly: bool = False, styleSheet: str = ""
-    ) -> QLineEdit:
-        """Return QLineEdit with given params."""
-
-        qLineEdit = QLineEdit()
-        qLineEdit.setFixedWidth(self.fixedWidth)
-        qLineEdit.setValidator(validator)
-        qLineEdit.setReadOnly(readOnly)
-        qLineEdit.setStyleSheet(styleSheet)
-        return qLineEdit
+    qLineEdit = QLineEdit()
+    qLineEdit.setFixedWidth(fixedWidth)
+    qLineEdit.setValidator(validator)
+    qLineEdit.setReadOnly(readOnly)
+    qLineEdit.setStyleSheet(styleSheet)
+    return qLineEdit
