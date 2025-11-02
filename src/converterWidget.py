@@ -47,7 +47,8 @@ class ConverterWidget(QWidget):
 
         # Create layouts
         cLayout = CLayout(self, self.defaultTemperature)
-        valuesLayout = ValuesLayout(self, self.defaultFreq, cLayout)
+        valuesLayoutTop = ValuesLayout(self, self.defaultFreq, cLayout)
+        valuesLayoutBot = ValuesLayout(self, self.defaultFreq, cLayout)
 
         # Main tab layout
         mainLayout = QVBoxLayout(self.converterWidget)
@@ -55,7 +56,8 @@ class ConverterWidget(QWidget):
             mainLayout.addWidget(QLabel(""))
         mainLayout.addLayout(cLayout.getLayout())
         mainLayout.addWidget(QLabel(""))  # mid padding
-        mainLayout.addLayout(valuesLayout.getLayout())
+        mainLayout.addLayout(valuesLayoutTop.getLayout())
+        mainLayout.addLayout(valuesLayoutBot.getLayout())
         for _ in range(5):  # bot padding
             mainLayout.addWidget(QLabel(""))
 
