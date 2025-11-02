@@ -247,23 +247,27 @@ class ValuesLayout(QWidget):
         timeUnit.addWidget(QLabel("ms"), alignment=Qt.AlignmentFlag.AlignLeft)
         timeUnit.addWidget(QLabel("/2"), alignment=Qt.AlignmentFlag.AlignLeft)
 
+        # Description widgets
+        freqDescri = QLabel("Frequency")
+        freqDescri.setStyleSheet(BOLD_STYLESHEET)
+        distanceDescri = QLabel("Lambda")
+        distanceDescri.setStyleSheet(BOLD_STYLESHEET)
+        timeDescri = QLabel("Period")
+        timeDescri.setStyleSheet(BOLD_STYLESHEET)
+
         # Layouts for /4 and /2 values
         freqLayout = QVBoxLayout()
-        freqLayout.addWidget(
-            QLabel("Frequency"), alignment=Qt.AlignmentFlag.AlignCenter
-        )
+        freqLayout.addWidget(freqDescri, alignment=Qt.AlignmentFlag.AlignCenter)
         freqLayout.addWidget(QLabel())  # empty cell
         freqLayout.addWidget(self.freq, alignment=Qt.AlignmentFlag.AlignRight)
         freqLayout.addWidget(QLabel())  # empty cell
         distanceLayout = QVBoxLayout()
-        distanceLayout.addWidget(
-            QLabel("Lambda"), alignment=Qt.AlignmentFlag.AlignCenter
-        )
+        distanceLayout.addWidget(distanceDescri, alignment=Qt.AlignmentFlag.AlignCenter)
         distanceLayout.addWidget(self.distance4, alignment=Qt.AlignmentFlag.AlignRight)
         distanceLayout.addWidget(self.distance, alignment=Qt.AlignmentFlag.AlignRight)
         distanceLayout.addWidget(self.distance2, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout = QVBoxLayout()
-        timeLayout.addWidget(QLabel("Period"), alignment=Qt.AlignmentFlag.AlignCenter)
+        timeLayout.addWidget(timeDescri, alignment=Qt.AlignmentFlag.AlignCenter)
         timeLayout.addWidget(self.time4, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout.addWidget(self.time, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout.addWidget(self.time2, alignment=Qt.AlignmentFlag.AlignRight)
