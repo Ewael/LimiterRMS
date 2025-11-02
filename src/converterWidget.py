@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (
     QLayout,
 )
 
-from src.constants import RO_STYLESHEET, FIXED_WIDTH
+from src.constants import RO_STYLESHEET, FIXED_WIDTH, BOLD_STYLESHEET
 from src.converter import (
     freqToDistance,
     freqToTime,
@@ -28,7 +28,10 @@ class ConverterWidget(QWidget):
 
     converterWidgetName = "Converter"
     defaultTemperature = 20
-    defaultFreq = 100
+    defaultFreq1 = 50
+    defaultFreq2 = 63
+    cInfo = "Please enter current temperature to compute speed of sound"
+    conversionInfo = "Now you can convert all you need"
 
     def __init__(self, parent: QWidget = None) -> None:
         """Create widget and methods to convert values.
@@ -45,21 +48,29 @@ class ConverterWidget(QWidget):
         # Main tab widget
         self.converterWidget = QWidget(parent)
 
+        # Info for speed of sound and converter
+        cInfo = QLabel(self.cInfo)
+        cInfo.setStyleSheet(BOLD_STYLESHEET)
+        conversionInfo = QLabel(self.conversionInfo)
+        conversionInfo.setStyleSheet(BOLD_STYLESHEET)
+
         # Create layouts
         cLayout = CLayout(self, self.defaultTemperature)
-        valuesLayoutTop = ValuesLayout(self, self.defaultFreq, cLayout)
-        valuesLayoutBot = ValuesLayout(self, self.defaultFreq, cLayout)
+        valuesLayoutTop = ValuesLayout(self, self.defaultFreq1, cLayout)
+        valuesLayoutBot = ValuesLayout(self, self.defaultFreq2, cLayout)
 
         # Main tab layout
         mainLayout = QVBoxLayout(self.converterWidget)
-        for _ in range(5):  # top padding
-            mainLayout.addWidget(QLabel(""))
+        for _ in range(3):  # top padding
+            mainLayout.addWidget(QLabel())
+        mainLayout.addWidget(cInfo, alignment=Qt.AlignmentFlag.AlignCenter)
         mainLayout.addLayout(cLayout.getLayout())
-        mainLayout.addWidget(QLabel(""))  # mid padding
+        mainLayout.addWidget(QLabel())  # mid padding
+        mainLayout.addWidget(conversionInfo, alignment=Qt.AlignmentFlag.AlignCenter)
         mainLayout.addLayout(valuesLayoutTop.getLayout())
         mainLayout.addLayout(valuesLayoutBot.getLayout())
-        for _ in range(5):  # bot padding
-            mainLayout.addWidget(QLabel(""))
+        for _ in range(3):  # bot padding
+            mainLayout.addWidget(QLabel())
 
     def getWidget(self) -> QWidget:
         """Return created QWidget."""
@@ -79,6 +90,7 @@ class CLayout(QWidget):
         """Define all widgets in layout and make connections."""
 
         super().__init__(parent)
+        self.par = parent
 
         # Validators for user input
         temperatureValidator = QDoubleValidator()
@@ -135,7 +147,7 @@ class CLayout(QWidget):
         self.cLayout.addLayout(sosLabelsLayout)
         self.cLayout.addLayout(sosValuesLayout)
         self.cLayout.addLayout(sosUnitsLayout)
-        for _ in range(5):  # spacing on the left
+        for _ in range(5):  # spacing on the right
             self.cLayout.addWidget(QLabel())
 
     def getLayout(self) -> QLayout:
@@ -219,18 +231,39 @@ class ValuesLayout(QWidget):
         self.freq.setText(f"{defaultFreq}")
 
         # Units
-        distanceUnit = QLabel("m")
-        timeUnit = QLabel("ms")
-        freqUnit = QLabel("Hz")
+        freqUnit = QVBoxLayout()
+        freqUnit.addWidget(QLabel())  # empty cell
+        freqUnit.addWidget(QLabel())  # empty cell
+        freqUnit.addWidget(QLabel("Hz"), alignment=Qt.AlignmentFlag.AlignLeft)
+        freqUnit.addWidget(QLabel())  # empty cell
+        distanceUnit = QVBoxLayout()
+        distanceUnit.addWidget(QLabel())  # empty cell
+        distanceUnit.addWidget(QLabel("/4"), alignment=Qt.AlignmentFlag.AlignLeft)
+        distanceUnit.addWidget(QLabel("m"), alignment=Qt.AlignmentFlag.AlignLeft)
+        distanceUnit.addWidget(QLabel("/2"), alignment=Qt.AlignmentFlag.AlignLeft)
+        timeUnit = QVBoxLayout()
+        timeUnit.addWidget(QLabel())  # empty cell
+        timeUnit.addWidget(QLabel("/4"), alignment=Qt.AlignmentFlag.AlignLeft)
+        timeUnit.addWidget(QLabel("ms"), alignment=Qt.AlignmentFlag.AlignLeft)
+        timeUnit.addWidget(QLabel("/2"), alignment=Qt.AlignmentFlag.AlignLeft)
 
         # Layouts for /4 and /2 values
         freqLayout = QVBoxLayout()
+        freqLayout.addWidget(
+            QLabel("Frequency"), alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        freqLayout.addWidget(QLabel())  # empty cell
         freqLayout.addWidget(self.freq, alignment=Qt.AlignmentFlag.AlignRight)
+        freqLayout.addWidget(QLabel())  # empty cell
         distanceLayout = QVBoxLayout()
+        distanceLayout.addWidget(
+            QLabel("Lambda"), alignment=Qt.AlignmentFlag.AlignCenter
+        )
         distanceLayout.addWidget(self.distance4, alignment=Qt.AlignmentFlag.AlignRight)
         distanceLayout.addWidget(self.distance, alignment=Qt.AlignmentFlag.AlignRight)
         distanceLayout.addWidget(self.distance2, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout = QVBoxLayout()
+        timeLayout.addWidget(QLabel("Period"), alignment=Qt.AlignmentFlag.AlignCenter)
         timeLayout.addWidget(self.time4, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout.addWidget(self.time, alignment=Qt.AlignmentFlag.AlignRight)
         timeLayout.addWidget(self.time2, alignment=Qt.AlignmentFlag.AlignRight)
@@ -240,11 +273,11 @@ class ValuesLayout(QWidget):
         for _ in range(5):  # spacing on the left
             self.valuesLayout.addWidget(QLabel())
         self.valuesLayout.addLayout(freqLayout)
-        self.valuesLayout.addWidget(freqUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.valuesLayout.addLayout(freqUnit)
         self.valuesLayout.addLayout(distanceLayout)
-        self.valuesLayout.addWidget(distanceUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.valuesLayout.addLayout(distanceUnit)
         self.valuesLayout.addLayout(timeLayout)
-        self.valuesLayout.addWidget(timeUnit, alignment=Qt.AlignmentFlag.AlignLeft)
+        self.valuesLayout.addLayout(timeUnit)
         for _ in range(5):  # spacing on the right
             self.valuesLayout.addWidget(QLabel())
 

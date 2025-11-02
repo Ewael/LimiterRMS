@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 
 from src.ampGain import AmpGain
+from src.constants import BOLD_STYLESHEET
 
 
 class AmpGainWidget(QWidget):
@@ -30,7 +31,7 @@ class AmpGainWidget(QWidget):
 
         # How to correctly mesure amplifier gain
         sineWaveInfo = QLabel("Generate a 50Hz sine wave")
-        sineWaveInfo.setStyleSheet("font-weight: bold")
+        sineWaveInfo.setStyleSheet(BOLD_STYLESHEET)
 
         # Voltage IN and voltage OUT
         voltageInInfo = QLabel("Voltage value BEFORE amplification:")
