@@ -11,7 +11,7 @@ paths = [
 
 
 def get_wav(dir_path: str) -> list[str]:
-    """Return list with .wav files pathes."""
+    """Return list with .wav files paths."""
 
     tracks_wav = []
     if os.path.exists(dir_path):
